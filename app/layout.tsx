@@ -13,10 +13,17 @@ const playfair = Playfair_Display({
   variable: "--font-serif",
 });
 
-export const metadata: Metadata = {
-  title: "Valteir Imobiliária | Imóveis de Alto Padrão",
-  description: "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imobiliária.",
-};
+import { createClient } from "@/lib/supabase/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient();
+  const { data: config } = await supabase.from('configuracoes').select('meta_title, meta_description').eq('id', 1).single();
+
+  return {
+    title: config?.meta_title || "Valteir Imobiliária | Imóveis de Alto Padrão",
+    description: config?.meta_description || "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imobiliária.",
+  };
+}
 
 export default function RootLayout({
   children,

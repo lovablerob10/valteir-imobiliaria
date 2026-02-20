@@ -29,6 +29,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 export default function NewNewsPage() {
     const [loading, setLoading] = useState(false);
@@ -197,19 +198,10 @@ export default function NewNewsPage() {
                             <ImageIcon className="w-4 h-4" />
                             <span className="text-[10px] uppercase font-bold tracking-widest">Mídia de Capa</span>
                         </div>
-                        <Input
-                            value={form.imagem_capa}
-                            onChange={(e) => setForm({ ...form, imagem_capa: e.target.value })}
-                            placeholder="URL da Imagem (Ex: /images/...)"
-                            className="bg-zinc-950 border-zinc-800 h-12"
+                        <ImageUpload
+                            images={form.imagem_capa ? [form.imagem_capa] : []}
+                            onChange={(urls) => setForm({ ...form, imagem_capa: urls[0] || "" })}
                         />
-                        <div className="aspect-video bg-zinc-950 rounded-xl border border-dashed border-zinc-800 flex flex-col items-center justify-center overflow-hidden">
-                            {form.imagem_capa ? (
-                                <img src={form.imagem_capa} className="w-full h-full object-cover" alt="Preview" />
-                            ) : (
-                                <p className="text-zinc-600 text-xs">Preview da Capa</p>
-                            )}
-                        </div>
                     </div>
 
                     {/* SEO */}

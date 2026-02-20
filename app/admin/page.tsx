@@ -38,11 +38,20 @@ export default async function AdminDashboard() {
         .order('created_at', { ascending: false })
         .limit(3);
 
+    const { data: imoveisVisitas } = await supabase
+        .from('imoveis')
+        .select('visualizacoes');
+    const totalViews = imoveisVisitas?.reduce((acc, curr) => acc + (curr.visualizacoes || 0), 0) || 0;
+
+    const { count: totalNoticias } = await supabase
+        .from('noticias')
+        .select('*', { count: 'exact', head: true });
+
     const stats = [
         { name: "Imóveis Ativos", value: activeProperties || 0, trend: "Atualizado", icon: Home, href: "/admin/imoveis" },
         { name: "Novos Leads", value: totalLeads || 0, trend: "Pendente", icon: MessageSquare, href: "/admin/leads" },
-        { name: "Visualizações", value: "1.2k", trend: "+15%", icon: Eye, href: "#" }, // Ainda estático (browser side tracking necessário)
-        { name: "Novas Notícias", value: "03", trend: "Recente", icon: Clock, href: "/admin/noticias" },
+        { name: "Visualizações", value: totalViews, trend: "Real", icon: Eye, href: "/admin/imoveis" },
+        { name: "Total Notícias", value: totalNoticias || 0, trend: "Publicadas", icon: Clock, href: "/admin/noticias" },
     ];
 
     return (
