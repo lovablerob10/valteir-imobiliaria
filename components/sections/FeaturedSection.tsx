@@ -1,52 +1,46 @@
 import PropertyCard from "./PropertyCard";
 import { Imovel } from "@/types/database";
+import { createClient } from "@supabase/supabase-js";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 
-const mockProperties: Partial<Imovel>[] = [
-    {
-        id: "1",
-        titulo: "Mansão Suspensa Itaim",
-        slug: "mansao-suspensa-itaim",
-        preco: 12500000,
-        bairro: "Itaim Bibi",
-        cidade: "São Paulo",
-        tipo: "mansao",
-        quartos: 4,
-        suites: 4,
-        area_util: 450,
-        destaque: true,
-        imagens: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"],
-    },
-    {
-        id: "2",
-        titulo: "Penthouse Jardins de Luxemburgo",
-        slug: "penthouse-jardins-luxemburgo",
-        preco: 8900000,
-        bairro: "Jardins",
-        cidade: "São Paulo",
-        tipo: "cobertura",
-        quartos: 3,
-        suites: 3,
-        area_util: 320,
-        destaque: true,
-        imagens: ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200"],
-    },
-    {
-        id: "3",
-        titulo: "Casa Contemporânea Tamboré",
-        slug: "casa-contemporanea-tambore",
-        preco: 15700000,
-        bairro: "Tamboré",
-        cidade: "Barueri",
-        tipo: "casa",
-        quartos: 5,
-        suites: 5,
-        area_util: 800,
-        destaque: false,
-        imagens: ["https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=1200"],
-    },
-];
+export default async function FeaturedSection() {
+    const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
 
-export default function FeaturedSection() {
+    const { data: properties, error } = await supabase
+        .from("imoveis")
+        .select("*")
+        .eq("status", "ativo")
+        .eq("destaque", true)
+        .order("ordem_destaque", { ascending: true })
+        .limit(3);
+
+    if (error) {
+        console.error("Erro Supabase FeaturedSection:", {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+        });
+        return null;
+    }
+
+    if (!properties || properties.length === 0) {
+        return (
+            <section className="py-24 px-4 md:px-8 bg-zinc-950">
+                <div className="max-w-7xl mx-auto text-center border border-zinc-900 rounded-3xl py-20 px-6">
+                    <h2 className="text-2xl font-serif text-white mb-4">Nenhum imóvel em destaque</h2>
+                    <p className="text-zinc-500 max-w-md mx-auto">
+                        Para que um imóvel apareça aqui, ele deve estar marcado como <strong>Ativo</strong> e <strong>Destaque</strong> no painel administrativo.
+                    </p>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className="py-24 px-4 md:px-8 bg-zinc-950">
             <div className="max-w-7xl mx-auto">
@@ -60,14 +54,17 @@ export default function FeaturedSection() {
                             <span className="text-accent italic">o seu estilo de vida</span>
                         </h2>
                     </div>
-                    <button className="text-accent text-xs font-bold tracking-[0.2em] uppercase border-b border-accent/30 pb-1 hover:border-accent transition-all">
-                        Ver todo o portfólio
-                    </button>
+                    <Link href="/imoveis">
+                        <button className="text-accent text-xs font-bold tracking-[0.2em] uppercase border-b border-accent/30 pb-1 hover:border-accent transition-all flex items-center gap-2 group">
+                            Ver todo o portfólio
+                            <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </button>
+                    </Link>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {mockProperties.map((property) => (
-                        <PropertyCard key={property.id} property={property} />
+                    {properties.map((property) => (
+                        <PropertyCard key={property.id} property={property as Imovel} />
                     ))}
                 </div>
             </div>

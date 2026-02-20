@@ -42,7 +42,7 @@ export default function Navbar() {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className={`text-[10px] font-bold tracking-[0.3em] uppercase transition-all hover:text-accent ${pathname === link.href ? "text-accent" : "text-zinc-300"
+                            className={`text-[13.5px] font-bold tracking-[0.3em] uppercase transition-all hover:text-accent ${pathname === link.href ? "text-accent" : "text-zinc-300"
                                 }`}
                         >
                             {link.name}
@@ -50,7 +50,7 @@ export default function Navbar() {
                     ))}
                     <Link
                         href="/contato"
-                        className="flex items-center gap-2 bg-accent/10 border border-accent/20 px-5 py-2.5 rounded-full text-accent text-[10px] font-bold tracking-widest uppercase hover:bg-accent hover:text-primary transition-all"
+                        className="flex items-center gap-2 bg-accent/10 border border-accent/20 px-5 py-2.5 rounded-xl text-accent text-[13.5px] font-bold tracking-widest uppercase hover:bg-accent hover:text-primary transition-all"
                     >
                         <Phone className="w-3.5 h-3.5" />
                         Agendar Visita

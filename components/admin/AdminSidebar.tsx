@@ -13,7 +13,8 @@ import {
     Menu,
     X,
     PlusCircle,
-    MessageSquare
+    MessageSquare,
+    FileText
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
@@ -26,14 +27,45 @@ export default function AdminSidebar({ className }: SidebarProps) {
     const router = useRouter();
     const supabase = createClient();
     const [isOpen, setIsOpen] = useState(true);
+    const [userRole, setUserRole] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchUserRole = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("role")
+                    .eq("user_id", user.id)
+                    .single();
+
+                if (profile) {
+                    setUserRole(profile.role);
+                }
+            }
+        };
+        fetchUserRole();
+    }, [supabase]);
 
     const menuItems = [
         { name: "Dashboard", icon: LayoutDashboard, href: "/admin" },
         { name: "Imóveis", icon: Home, href: "/admin/imoveis" },
         { name: "Leads", icon: MessageSquare, href: "/admin/leads" },
-        { name: "Equipe", icon: Users, href: "/admin/equipe" },
-        { name: "Configurações", icon: Settings, href: "/admin/configuracoes" },
-    ];
+        { name: "Relatórios", icon: FileText, href: "/admin/relatorios" },
+        { name: "Notícias", icon: FileText, href: "/admin/noticias" },
+        {
+            name: "Equipe",
+            icon: Users,
+            href: "/admin/equipe",
+            adminOnly: true
+        },
+        {
+            name: "Configurações",
+            icon: Settings,
+            href: "/admin/configuracoes",
+            adminOnly: true
+        },
+    ].filter(item => !item.adminOnly || userRole === 'admin' || userRole === 'admin_master');
 
     const handleLogout = async () => {
         await supabase.auth.signOut();

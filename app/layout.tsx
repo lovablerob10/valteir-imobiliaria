@@ -18,9 +18,6 @@ export const metadata: Metadata = {
   description: "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imobiliária.",
 };
 
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,9 +29,7 @@ export default function RootLayout({
         className={`${inter.variable} ${playfair.variable} font-sans bg-zinc-950`}
         suppressHydrationWarning
       >
-        <Navbar />
         {children}
-        <Footer />
         <Toaster position="top-right" richColors />
       </body>
     </html>

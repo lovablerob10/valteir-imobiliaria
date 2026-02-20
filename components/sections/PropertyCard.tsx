@@ -20,9 +20,9 @@ export default function PropertyCard({ property }: PropertyCardProps) {
 
     const fallbackImages: Record<string, string> = {
         mansao: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200",
-        cobertura: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200", // Nova imagem de cobertura de luxo
-        casa: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&q=80&w=1200",
-        apartamento: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1200"
+        cobertura: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200",
+        casa: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&q=80&w=1200",
+        apartamento: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&q=80&w=1200"
     };
 
     const imageUrl = property.imagens?.[0] || fallbackImages[property.tipo || "mansao"] || "/images/properties/placeholder.jpg";

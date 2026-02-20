@@ -16,7 +16,12 @@ export interface Database {
                     descricao: string | null
                     slug: string
                     tipo: 'casa' | 'apartamento' | 'terreno' | 'comercial' | 'mansao' | 'cobertura' | 'loft'
-                    status: 'ativo' | 'vendido' | 'reservado' | 'inativo'
+                    tipo_negocio: 'venda' | 'aluguel' | 'ambos'
+                    valor_locacao: number | null
+                    valor_condominio: number | null
+                    valor_iptu: number | null
+                    garantias: string[]
+                    status: 'ativo' | 'vendido' | 'reservado' | 'inativo' | 'alugado'
                     endereco: string
                     numero: string | null
                     complemento: string | null
@@ -60,22 +65,27 @@ export interface Database {
                 Row: {
                     id: string
                     imovel_id: string | null
+                    corretor_id: string | null
                     nome: string
-                    email: string
-                    telefone: string
+                    email: string | null
+                    telefone: string | null
                     mensagem: string | null
-                    status: string
+                    tipo_interesse: string | null
+                    status: 'novo' | 'em_atendimento' | 'convertido' | 'perdido'
                     created_at: string
+                    updated_at: string
                 }
             }
-            perfis: {
+            profiles: {
                 Row: {
-                    id: string
-                    nome: string
-                    email: string
-                    role: 'admin' | 'corretor' | 'editor'
+                    user_id: string
+                    email: string | null
+                    full_name: string | null
+                    role: string
                     avatar_url: string | null
                     telefone: string | null
+                    created_at: string
+                    updated_at: string
                 }
             }
         }
@@ -84,4 +94,4 @@ export interface Database {
 
 export type Imovel = Database['public']['Tables']['imoveis']['Row']
 export type Lead = Database['public']['Tables']['leads']['Row']
-export type Perfil = Database['public']['Tables']['perfis']['Row']
+export type Perfil = Database['public']['Tables']['profiles']['Row']

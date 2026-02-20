@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 
 export default async function DiagnosticPage() {
-    const supabase = createClient();
+    const supabase = await createClient();
 
     let dbStatus = "Iniciando teste...";
     let data_raw = null;

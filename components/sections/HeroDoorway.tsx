@@ -11,7 +11,8 @@ export default function HeroDoorway() {
     const containerRef = useRef<HTMLDivElement>(null);
     const leftDoorRef = useRef<HTMLDivElement>(null);
     const rightDoorRef = useRef<HTMLDivElement>(null);
-    const contentRef = useRef<HTMLDivElement>(null);
+    const sloganRef = useRef<HTMLDivElement>(null);
+    const bgRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -19,98 +20,123 @@ export default function HeroDoorway() {
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: "+=200%",
+                    end: "+=250%",
                     pin: true,
                     scrub: 1,
+                    anticipatePin: 1,
                 },
             });
 
+            // Opening doors - synced animation
             tl.to(leftDoorRef.current, {
                 xPercent: -100,
                 ease: "power2.inOut",
-            }, 0)
-                .to(rightDoorRef.current, {
-                    xPercent: 100,
-                    ease: "power2.inOut",
-                }, 0)
-                .to(contentRef.current, {
-                    scale: 1.1,
-                    opacity: 0,
-                    ease: "none",
-                }, 0);
+            }, 0);
+
+            tl.to(rightDoorRef.current, {
+                xPercent: 100,
+                ease: "power2.inOut",
+            }, 0);
+
+            // Revealing background and slogan simultaneously as doors split
+            tl.to(bgRef.current, {
+                scale: 1.05,
+                filter: "brightness(0.7)",
+                ease: "power1.out",
+            }, 0);
+
+            tl.fromTo(sloganRef.current,
+                { opacity: 0, scale: 0.9, y: 15 },
+                { opacity: 1, scale: 1, y: 0, ease: "power2.out", duration: 1 },
+                0.05 // Starts almost immediately
+            );
+
+            // Deepen focus at the bottom of the section
+            tl.to(bgRef.current, {
+                filter: "brightness(0.3)",
+                ease: "none"
+            }, ">0.5");
+
         }, containerRef);
 
         return () => ctx.revert();
     }, []);
 
     return (
-        <section ref={containerRef} className="relative h-screen w-full overflow-hidden bg-primary">
-            {/* Camada 1: Interior (Fundo) */}
-            <div className="absolute inset-0 z-0 bg-zinc-900">
+        <section ref={containerRef} className="relative h-[100vh] w-full overflow-hidden bg-black">
+            {/* 1. Main Background Image (Behind) - z-10 */}
+            <div ref={bgRef} className="absolute inset-0 z-10">
                 <Image
-                    src="/images/hero/interior-mansion.jpg"
-                    alt="Interior da Mansão"
+                    src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000"
+                    alt="Mansão de Luxo"
                     fill
-                    className="object-cover opacity-60"
+                    className="object-cover"
                     priority
-                    onError={(e) => {
-                        (e.target as any).style.display = "none";
-                    }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80" />
+                <div className="absolute inset-0 bg-black/60" />
             </div>
 
-            {/* Camada 2: Portas (Meio) */}
-            <div className="absolute inset-0 z-20 flex w-full">
+            {/* 2. Slogan - In the middle - z-20 */}
+            <div
+                ref={sloganRef}
+                className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4 text-center pointer-events-none"
+            >
+                <div className="flex flex-col items-center gap-2 mb-8">
+                    <span className="text-[10px] md:text-xs font-medium tracking-[0.8em] text-accent uppercase opacity-70 mb-2">
+                        Valteir Imobiliária
+                    </span>
+                    <div className="h-[1px] w-20 bg-accent/30" />
+                </div>
+
+                <div className="flex flex-col items-center">
+                    <h2 className="text-2xl md:text-4xl lg:text-5xl font-serif text-white/90 tracking-tight mb-2">
+                        Abra a porta para
+                    </h2>
+
+                    <div className="flex items-center gap-6 my-4">
+                        <div className="h-[1px] w-12 md:w-20 bg-white/10" />
+                        <span className="text-xl md:text-3xl text-accent italic font-serif opacity-90">o seu</span>
+                        <div className="h-[1px] w-12 md:w-20 bg-white/10" />
+                    </div>
+
+                    <h1 className="text-5xl md:text-8xl lg:text-[10rem] font-serif text-white leading-none tracking-tighter drop-shadow-[0_0_50px_rgba(255,255,255,0.15)]">
+                        novo <span className="text-accent italic">destino</span>
+                    </h1>
+                </div>
+
+                <div className="mt-20 flex flex-col items-center gap-6 opacity-30">
+                    <div className="h-24 w-[1px] bg-gradient-to-b from-accent to-transparent" />
+                </div>
+            </div>
+
+            {/* 3. The Doors (In Front) - z-30 */}
+            <div className="absolute inset-0 z-30 flex pointer-events-none">
+                {/* Left Door */}
                 <div
                     ref={leftDoorRef}
-                    className="relative h-full w-1/2 border-r border-accent/30 bg-zinc-900/90 shadow-2xl"
+                    className="relative w-1/2 h-full bg-[#0a0a0a] backdrop-blur-3xl border-r border-white/10 flex justify-end items-center"
                 >
-                    <Image
-                        src="/images/hero/door-left.jpg"
-                        alt="Porta Esquerda"
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                            (e.target as any).style.display = "none";
-                        }}
-                    />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 h-24 w-1 rounded-full bg-accent/40 shadow-[0_0_20px_rgba(245,158,11,0.5)]" />
+                    {/* Glass visual effect shadow */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white/[0.02]" />
+                    {/* Handle decoration */}
+                    <div className="w-[1px] h-40 bg-white/20 mr-0 z-40" />
                 </div>
+
+                {/* Right Door */}
                 <div
                     ref={rightDoorRef}
-                    className="relative h-full w-1/2 border-l border-accent/30 bg-zinc-900/90 shadow-2xl"
+                    className="relative w-1/2 h-full bg-[#0a0a0a] backdrop-blur-3xl border-l border-white/10 flex justify-start items-center"
                 >
-                    <Image
-                        src="/images/hero/door-right.jpg"
-                        alt="Porta Direita"
-                        fill
-                        className="object-cover"
-                        onError={(e) => {
-                            (e.target as any).style.display = "none";
-                        }}
-                    />
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 h-24 w-1 rounded-full bg-accent/40 shadow-[0_0_20px_rgba(245,158,11,0.5)]" />
+                    {/* Glass visual effect shadow */}
+                    <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white/[0.02]" />
+                    {/* Handle decoration */}
+                    <div className="w-[1px] h-40 bg-white/20 ml-0 z-40" />
                 </div>
             </div>
 
-            {/* Camada 3: Texto (Frente) */}
-            <div
-                ref={contentRef}
-                className="absolute inset-0 z-10 flex flex-col items-center justify-center px-4 text-center pointer-events-none"
-            >
-                <span className="mb-4 text-xs font-medium tracking-[0.5em] text-accent uppercase animate-fade-in opacity-80">
-                    Valteir Imobiliária
-                </span>
-                <h1 className="max-w-5xl text-5xl md:text-7xl lg:text-9xl font-serif text-white leading-[1.1]">
-                    Abra a porta para o seu <br />
-                    <span className="text-accent italic">novo destino</span>
-                </h1>
-                <div className="mt-16 flex flex-col items-center gap-4">
-                    <div className="h-24 w-[1px] bg-gradient-to-b from-accent to-transparent" />
-                    <span className="text-[10px] tracking-[0.4em] text-accent/60 uppercase">Role para abrir</span>
-                </div>
-            </div>
+            {/* Top/Bottom Frames */}
+            <div className="absolute top-0 left-0 w-full h-12 bg-black/40 z-40" />
+            <div className="absolute bottom-0 left-0 w-full h-12 bg-black/40 z-40" />
         </section>
     );
 }
