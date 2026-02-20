@@ -79,20 +79,27 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     const supabase = createClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: initialData ? {
-            ...initialData,
+            titulo: initialData.titulo,
+            descricao: initialData.descricao || "",
             preco: Number(initialData.preco),
+            tipo: initialData.tipo,
+            tipo_negocio: (initialData.tipo_negocio as any) || 'venda',
+            valor_locacao: Number(initialData.valor_locacao || 0),
+            valor_condominio: Number(initialData.valor_condominio || 0),
+            valor_iptu: Number(initialData.valor_iptu || 0),
+            garantias: initialData.garantias || [],
+            bairro: initialData.bairro,
+            cidade: initialData.cidade,
+            estado: initialData.estado,
+            endereco: initialData.endereco,
             quartos: Number(initialData.quartos || 0),
             suites: Number(initialData.suites || 0),
             area_util: Number(initialData.area_util || 0),
             vagas_garagem: Number(initialData.vagas_garagem || 0),
-            valor_locacao: Number(initialData.valor_locacao || 0),
-            valor_condominio: Number(initialData.valor_condominio || 0),
-            valor_iptu: Number(initialData.valor_iptu || 0),
-            tipo_negocio: (initialData.tipo_negocio as any) || 'venda',
+            destaque: initialData.destaque,
             status: (initialData.status as any) || 'ativo',
-            garantias: initialData.garantias || [],
         } : {
             tipo: 'mansao',
             estado: 'SP',
@@ -153,7 +160,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     }
 
     return (
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-12">
+        <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-12">
             {/* Seção 1: Imagens */}
             <section className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800">
                 <h2 className="text-xl font-serif text-white mb-6">Galeria de Imagens</h2>
