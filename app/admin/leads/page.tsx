@@ -442,14 +442,16 @@ export default function LeadsPage() {
                             <div className="flex items-center gap-4 pt-4 border-t border-zinc-900">
                                 <Button
                                     className="flex-1 bg-accent hover:bg-white text-primary font-bold h-12 rounded-xl transition-all"
-                                    onClick={() => window.open(`https://wa.me/55${selectedLead.telefone.replace(/\D/g, '')}?text=Olá ${selectedLead.nome}, recebemos seu contato na Valteir Imobiliária. Como podemos ajudar?`, '_blank')}
+                                    onClick={() => window.open(`https://wa.me/55${(selectedLead.telefone || '').replace(/\D/g, '')}?text=Olá ${selectedLead.nome}, recebemos seu contato na Valteir Imobiliária. Como podemos ajudar?`, '_blank')}
+                                    disabled={!selectedLead.telefone}
                                 >
                                     <Phone className="w-4 h-4 mr-2" /> Iniciar WhatsApp
                                 </Button>
                                 <Button
                                     variant="outline"
                                     className="flex-1 border-zinc-800 hover:bg-zinc-900 text-white h-12 rounded-xl"
-                                    onClick={() => window.location.href = `mailto:${selectedLead.email}?subject=Retorno - Valteir Imobiliária`}
+                                    onClick={() => window.location.href = `mailto:${selectedLead.email || ''}?subject=Retorno - Valteir Imobiliária`}
+                                    disabled={!selectedLead.email}
                                 >
                                     <Mail className="w-4 h-4 mr-2" /> Responder E-mail
                                 </Button>
