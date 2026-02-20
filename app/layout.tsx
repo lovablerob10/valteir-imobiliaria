@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-export const runtime = 'edge';
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
