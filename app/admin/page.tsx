@@ -7,6 +7,7 @@ import {
     TrendingUp,
     Clock
 } from "lucide-react";
+import Link from "next/link";
 
 export default async function AdminDashboard() {
     const supabase = await createClient();
@@ -38,10 +39,10 @@ export default async function AdminDashboard() {
         .limit(3);
 
     const stats = [
-        { name: "Imóveis Ativos", value: activeProperties || 0, trend: "Atualizado", icon: Home },
-        { name: "Novos Leads", value: totalLeads || 0, trend: "Pendente", icon: MessageSquare },
-        { name: "Visualizações", value: "1.2k", trend: "+15%", icon: Eye }, // Ainda estático (browser side tracking necessário)
-        { name: "Novas Notícias", value: "03", trend: "Recente", icon: Clock },
+        { name: "Imóveis Ativos", value: activeProperties || 0, trend: "Atualizado", icon: Home, href: "/admin/imoveis" },
+        { name: "Novos Leads", value: totalLeads || 0, trend: "Pendente", icon: MessageSquare, href: "/admin/leads" },
+        { name: "Visualizações", value: "1.2k", trend: "+15%", icon: Eye, href: "#" }, // Ainda estático (browser side tracking necessário)
+        { name: "Novas Notícias", value: "03", trend: "Recente", icon: Clock, href: "/admin/noticias" },
     ];
 
     return (
@@ -59,19 +60,31 @@ export default async function AdminDashboard() {
 
             {/* Quick Stats Grid */}
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat) => (
-                    <div key={stat.name} className="p-6 bg-zinc-900/40 border border-white/5 rounded-3xl hover:border-accent/40 transition-all group backdrop-blur-sm relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-16 h-16 bg-accent/5 blur-2xl rounded-full" />
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="p-2 rounded-xl bg-zinc-950/50 text-accent border border-white/5">
-                                <stat.icon size={18} />
+                {stats.map((stat) => {
+                    const CardContent = (
+                        <div className="p-6 bg-zinc-900/40 border border-white/5 rounded-3xl hover:border-accent/40 hover:bg-zinc-900/60 transition-all group backdrop-blur-sm relative overflow-hidden h-full">
+                            <div className="absolute top-0 right-0 w-16 h-16 bg-accent/5 blur-2xl rounded-full" />
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-2 rounded-xl bg-zinc-950/50 text-accent border border-white/5 group-hover:bg-accent/10 transition-colors">
+                                    <stat.icon size={18} />
+                                </div>
+                                <span className="text-[10px] text-accent/60 font-medium uppercase tracking-tighter">{stat.trend}</span>
                             </div>
-                            <span className="text-[10px] text-accent/60 font-medium uppercase tracking-tighter">{stat.trend}</span>
+                            <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-1 font-bold">{stat.name}</p>
+                            <h3 className="text-3xl font-serif text-white">{stat.value}</h3>
                         </div>
-                        <p className="text-[10px] uppercase tracking-[0.2em] text-zinc-500 mb-1 font-bold">{stat.name}</p>
-                        <h3 className="text-3xl font-serif text-white">{stat.value}</h3>
-                    </div>
-                ))}
+                    );
+
+                    return stat.href !== "#" ? (
+                        <Link key={stat.name} href={stat.href} className="block">
+                            {CardContent}
+                        </Link>
+                    ) : (
+                        <div key={stat.name}>
+                            {CardContent}
+                        </div>
+                    );
+                })}
             </section>
 
             {/* Recent Activity Section */}
@@ -80,7 +93,9 @@ export default async function AdminDashboard() {
                     <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent/5 blur-3xl rounded-full" />
                     <div className="flex items-center justify-between mb-8">
                         <h4 className="text-xl font-serif text-white">Últimos Leads</h4>
-                        <span className="text-[10px] text-accent font-bold uppercase tracking-widest cursor-pointer hover:underline">Ver Todos</span>
+                        <Link href="/admin/leads">
+                            <span className="text-[10px] text-accent font-bold uppercase tracking-widest cursor-pointer hover:underline">Ver Todos</span>
+                        </Link>
                     </div>
                     <div className="space-y-4">
                         {(recentLeads || []).map((lead) => (

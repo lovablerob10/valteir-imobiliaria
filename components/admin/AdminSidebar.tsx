@@ -101,7 +101,7 @@ export default function AdminSidebar({ className }: SidebarProps) {
                     {/* Navigation Items */}
                     <nav className="flex-1 py-8 px-4 space-y-2">
                         {menuItems.map((item) => {
-                            const isActive = pathname === item.href;
+                            const isActive = item.href === '/admin' ? pathname === item.href : pathname.startsWith(item.href);
                             return (
                                 <Link
                                     key={item.href}

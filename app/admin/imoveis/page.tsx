@@ -31,6 +31,7 @@ import {
     ExternalLink,
     Loader2
 } from "lucide-react";
+import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -53,8 +54,26 @@ export default function AdminImoveisPage() {
 
         if (!error) {
             setImoveis(data as Imovel[]);
+        } else {
+            toast.error("Erro ao carregar imóveis");
         }
         setLoading(false);
+    }
+
+    async function deleteImovel(id: string) {
+        if (!window.confirm("Deseja realmente excluir este imóvel e todas as suas imagens?")) return;
+
+        const { error } = await supabase
+            .from("imoveis")
+            .delete()
+            .eq("id", id);
+
+        if (!error) {
+            setImoveis(prev => prev.filter(i => i.id !== id));
+            toast.success("Imóvel excluído com sucesso");
+        } else {
+            toast.error("Erro ao excluir imóvel");
+        }
     }
 
     const filteredImoveis = imoveis.filter(i =>
@@ -152,14 +171,21 @@ export default function AdminImoveisPage() {
                                             <DropdownMenuContent align="end" className="bg-zinc-900 border-zinc-800 text-white w-48">
                                                 <DropdownMenuLabel className="text-zinc-500 text-[10px] uppercase tracking-widest p-4">Opções</DropdownMenuLabel>
                                                 <DropdownMenuSeparator className="bg-zinc-800" />
-                                                <DropdownMenuItem className="p-3 focus:bg-zinc-800 cursor-pointer">
-                                                    <Edit className="w-4 h-4 mr-3 text-accent" /> Editar Detalhes
-                                                </DropdownMenuItem>
-                                                <DropdownMenuItem className="p-3 focus:bg-zinc-800 cursor-pointer">
-                                                    <ExternalLink className="w-4 h-4 mr-3 text-zinc-400" /> Ver no Site
-                                                </DropdownMenuItem>
+                                                <Link href={`/admin/imoveis/${imovel.id}`}>
+                                                    <DropdownMenuItem className="p-3 focus:bg-zinc-800 cursor-pointer">
+                                                        <Edit className="w-4 h-4 mr-3 text-accent" /> Editar Detalhes
+                                                    </DropdownMenuItem>
+                                                </Link>
+                                                <Link href={`/imovel/${imovel.slug}`} target="_blank">
+                                                    <DropdownMenuItem className="p-3 focus:bg-zinc-800 cursor-pointer">
+                                                        <ExternalLink className="w-4 h-4 mr-3 text-zinc-400" /> Ver no Site
+                                                    </DropdownMenuItem>
+                                                </Link>
                                                 <DropdownMenuSeparator className="bg-zinc-800" />
-                                                <DropdownMenuItem className="p-3 focus:bg-red-500/10 focus:text-red-500 text-red-500/70 cursor-pointer">
+                                                <DropdownMenuItem
+                                                    className="p-3 focus:bg-red-500/10 focus:text-red-500 text-red-500/70 cursor-pointer"
+                                                    onClick={() => deleteImovel(imovel.id)}
+                                                >
                                                     <Trash2 className="w-4 h-4 mr-3" /> Excluir Imóvel
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
