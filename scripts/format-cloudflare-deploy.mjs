@@ -47,6 +47,7 @@ const routesJson = {
     exclude: [
         "/_next/static/*",
         "/favicon.ico",
+        "/favicon.svg",
         "/robots.txt",
         "/sitemap.xml",
         "/videos/*"

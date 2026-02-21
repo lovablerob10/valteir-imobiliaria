@@ -23,6 +23,12 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: config?.meta_title || "Valteir Imobiliária | Imóveis de Alto Padrão",
     description: config?.meta_description || "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imobiliária.",
+    icons: {
+      icon: [
+        { url: '/favicon.svg?v=2', type: 'image/svg+xml' },
+      ],
+      apple: '/favicon.svg?v=2',
+    }
   };
 }
 
