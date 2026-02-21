@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://fallback.supabase.co',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'fallback_key'
 );
 import { Imovel } from "@/types/database";
 import { Badge } from "@/components/ui/badge";

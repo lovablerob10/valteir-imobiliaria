@@ -6,8 +6,8 @@ import { ArrowUpRight } from "lucide-react";
 
 export default async function FeaturedSection() {
     const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://fallback.supabase.co',
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'fallback_key'
     );
 
     const { data: properties, error } = await supabase
