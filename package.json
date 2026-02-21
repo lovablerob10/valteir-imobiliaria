@@ -5,8 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "pages:build": "npx @opennextjs/cloudflare build && node scripts/format-cloudflare-deploy.mjs",
-    "pages:deploy": "npm run pages:build && npx wrangler pages deploy .open-next --project-name valteir-imobiliaria",
+    "pages:build": "npx @opennextjs/cloudflare build && mv .open-next/worker.js .open-next/_worker.js && cp -r .open-next/assets/* .open-next/",
     "start": "next start",
     "lint": "eslint"
   },
