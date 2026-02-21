@@ -32,7 +32,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="group">
                     <span className="text-2xl md:text-3xl font-serif text-white tracking-tighter flex items-center">
-                        VALTEIR<span className="text-accent group-hover:animate-pulse">.</span>IMOB
+                        VALTEIR<span className="text-accent group-hover:animate-pulse">.</span>IMOVEIS
                     </span>
                 </Link>
 

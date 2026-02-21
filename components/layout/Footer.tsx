@@ -6,7 +6,7 @@ export default async function Footer() {
     const supabase = await createClient();
     const { data: config } = await supabase.from('configuracoes').select('*').eq('id', 1).single();
 
-    const imobName = config?.nome_imobiliaria || "VALTEIR IMOB";
+    const imobName = config?.nome_imobiliaria || "VALTEIR IMÓVEIS";
     const nameParts = imobName.split(' ');
     const firstName = nameParts[0];
     const restName = nameParts.slice(1).join(' ');
@@ -79,7 +79,7 @@ export default async function Footer() {
 
                 <div className="pt-8 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-[10px] text-zinc-600 uppercase tracking-widest">
-                        © {new Date().getFullYear()} Valteir Imobiliária. Todos os direitos reservados.
+                        © {new Date().getFullYear()} Valteir Imóveis. Todos os direitos reservados.
                     </p>
                     <div className="flex gap-6">
                         <Link href="/termos" className="text-[10px] text-zinc-600 hover:text-zinc-400 uppercase tracking-widest">Termos</Link>
