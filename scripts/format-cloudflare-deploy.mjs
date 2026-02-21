@@ -38,4 +38,29 @@ try {
     console.error('Erro ao copiar assets:', e.message);
 }
 
+// 3. Criar _routes.json para que Cloudflare Pages sirva /_next/static como
+//    arquivos estáticos em vez de rotear pelo _worker.js
+//    Ref: https://developers.cloudflare.com/pages/functions/routing/#create-a-_routesjson-file
+const routesJson = {
+    version: 1,
+    include: ["/*"],
+    exclude: [
+        "/_next/static/*",
+        "/favicon.ico",
+        "/robots.txt",
+        "/sitemap.xml",
+        "/_next/image*"
+    ]
+};
+
+try {
+    fs.writeFileSync(
+        path.join(openNextDir, '_routes.json'),
+        JSON.stringify(routesJson, null, 2)
+    );
+    console.log('✓ _routes.json criado para excluir assets estáticos do Worker');
+} catch (e) {
+    console.error('Erro ao criar _routes.json:', e.message);
+}
+
 console.log('--- Formatação Concluída! ---');
