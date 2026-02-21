@@ -5,43 +5,37 @@ console.log('--- Formatando a saída do OpenNext para Cloudflare Pages Advanced 
 
 const openNextDir = '.open-next';
 const assetsDir = path.join(openNextDir, 'assets');
-
-// 1. Copiar _worker.js (renomeado de worker.js) para dentro de /assets
-//    Pages Advanced Mode: _worker.js DEVE estar na raiz do output directory
-//    E os assets estáticos ficam ao lado dele
 const workerSrc = path.join(openNextDir, 'worker.js');
-const workerDest = path.join(assetsDir, '_worker.js');
+const workerDest = path.join(openNextDir, '_worker.js');
 
+// 1. Renomear worker.js para _worker.js (exigido pelo Cloudflare Pages Advanced Mode)
 try {
-    fs.copyFileSync(workerSrc, workerDest);
-    console.log('✓ worker.js copiado para assets/_worker.js');
+    if (fs.existsSync(workerSrc)) {
+        fs.renameSync(workerSrc, workerDest);
+        console.log('✓ worker.js renomeado para _worker.js');
+    }
 } catch (e) {
-    console.error('Erro ao copiar worker.js:', e.message);
+    console.error('Erro ao renomear worker.js:', e.message);
 }
 
-// 2. Copiar as pastas que o worker.js importa para dentro de /assets
-//    O worker.js faz import de:
-//    - ./cloudflare/images.js
-//    - ./cloudflare/init.js
-//    - ./cloudflare/skew-protection.js
-//    - ./middleware/handler.mjs
-//    - ./.build/durable-objects/...
-//    - ./server-functions/default/handler.mjs
-const dirsToLink = ['cloudflare', 'middleware', '.build', 'server-functions', 'cloudflare-templates', 'dynamodb-provider', 'cache'];
-
-dirsToLink.forEach(dir => {
-    const src = path.join(openNextDir, dir);
-    const dest = path.join(assetsDir, dir);
-
-    if (fs.existsSync(src)) {
-        // Remove destino se já existir
-        if (fs.existsSync(dest)) {
-            fs.rmSync(dest, { recursive: true, force: true });
+// 2. Copiar todos os arquivos/pastas de .open-next/assets/ para a raiz .open-next/
+//    Isso garante que /_next/static/* fique acessível em .open-next/_next/static/*
+try {
+    if (fs.existsSync(assetsDir)) {
+        const items = fs.readdirSync(assetsDir);
+        let count = 0;
+        for (const item of items) {
+            const src = path.join(assetsDir, item);
+            const dest = path.join(openNextDir, item);
+            if (!fs.existsSync(dest)) {
+                fs.cpSync(src, dest, { recursive: true });
+                count++;
+            }
         }
-        // Copia a pasta inteira
-        fs.cpSync(src, dest, { recursive: true });
-        console.log(`✓ Pasta ${dir}/ copiada para assets/${dir}/`);
+        console.log(`✓ Extraídos ${count} arquivos/pastas de /assets para a raiz /${openNextDir}/`);
     }
-});
+} catch (e) {
+    console.error('Erro ao copiar assets:', e.message);
+}
 
 console.log('--- Formatação Concluída! ---');
