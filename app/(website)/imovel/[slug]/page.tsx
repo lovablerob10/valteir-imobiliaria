@@ -350,8 +350,8 @@ export default function PropertyDetailPage() {
                                     <h4 className="text-accent font-serif font-bold text-lg">AV</h4>
                                 </div>
                                 <div>
-                                    <h4 className="text-white text-sm font-medium">Arthur Valteir</h4>
-                                    <p className="text-[10px] text-accent uppercase tracking-wider font-bold">Corretor de Luxo</p>
+                                    <h4 className="text-white text-sm font-medium">Valteir</h4>
+                                    <p className="text-accent text-[10px] font-bold uppercase tracking-wider">CRECI: 214072F- SP</p>
                                 </div>
                             </div>
                             <p className="text-xs text-muted-luxury italic">"Minha missão é encontrar não apenas uma casa, mas o cenário perfeito para a sua nova história."</p>

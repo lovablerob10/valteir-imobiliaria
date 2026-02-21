@@ -72,7 +72,7 @@ export default function AboutValteir() {
                                 onClick={() => window.open('https://wa.me/5517991726078', '_blank')}
                             >
                                 <MessageSquare className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                                Fale com Valteir
+                                Fale com Valteir | CRECI: 214072F- SP
                             </Button>
                         </div>
                     </div>
