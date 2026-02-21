@@ -48,8 +48,7 @@ const routesJson = {
         "/_next/static/*",
         "/favicon.ico",
         "/robots.txt",
-        "/sitemap.xml",
-        "/_next/image*"
+        "/sitemap.xml"
     ]
 };
 
