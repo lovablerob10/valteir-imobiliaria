@@ -29,33 +29,76 @@ import {
     Edit,
     Trash2,
     ExternalLink,
-    Loader2
+    Loader2,
+    FileEdit
 } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import Image from "next/image";
 
+interface DraftData {
+    titulo?: string;
+    descricao?: string;
+    preco?: number;
+    tipo?: string;
+    bairro?: string;
+    cidade?: string;
+    imagens?: string[];
+    savedAt?: string;
+    mode?: string;
+}
+
 export default function AdminImoveisPage() {
     const [imoveis, setImoveis] = useState<Imovel[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [draft, setDraft] = useState<DraftData | null>(null);
     const supabase = createClient();
 
     useEffect(() => {
         fetchImoveis();
-    }, [supabase]);
+        loadDraft();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    function loadDraft() {
+        try {
+            const savedDraft = localStorage.getItem("@valteir:property-draft");
+            if (savedDraft) {
+                const parsed = JSON.parse(savedDraft);
+                if (parsed.mode === 'create' && (parsed.titulo || (parsed.imagens && parsed.imagens.length > 0))) {
+                    setDraft(parsed);
+                }
+            }
+        } catch (e) {
+            console.error("Erro ao carregar rascunho:", e);
+        }
+    }
+
+    function discardDraft() {
+        if (!window.confirm("Deseja descartar este rascunho? Essa ação não pode ser desfeita.")) return;
+        localStorage.removeItem("@valteir:property-draft");
+        setDraft(null);
+        toast.success("Rascunho descartado!");
+    }
 
     async function fetchImoveis() {
         setLoading(true);
-        const { data, error } = await supabase
-            .from("imoveis")
-            .select("*")
-            .order("created_at", { ascending: false });
+        try {
+            const { data, error } = await supabase
+                .from("imoveis")
+                .select("*")
+                .order("created_at", { ascending: false });
 
-        if (!error) {
-            setImoveis(data as Imovel[]);
-        } else {
-            toast.error("Erro ao carregar imóveis");
+            if (error) {
+                console.error("Erro Supabase detalhado:", JSON.stringify(error), error?.message, error?.code, error?.details, error?.hint);
+                toast.error(`Erro ao carregar: ${error?.message || 'Verifique o login'}`);
+            } else {
+                setImoveis((data || []) as Imovel[]);
+            }
+        } catch (err: any) {
+            console.error("Erro inesperado:", err);
+            toast.error("Erro inesperado ao carregar imóveis.");
         }
         setLoading(false);
     }
@@ -124,6 +167,113 @@ export default function AdminImoveisPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
+                            {/* === LINHA DE RASCUNHO === */}
+                            {draft && (
+                                <TableRow
+                                    style={{
+                                        borderBottom: '1px solid rgba(245, 158, 11, 0.2)',
+                                        backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                                    }}
+                                >
+                                    <TableCell className="py-4 px-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="relative w-16 h-12 rounded-lg overflow-hidden border shrink-0" style={{ borderColor: 'rgba(245,158,11,0.3)' }}>
+                                                {draft.imagens && draft.imagens.length > 0 ? (
+                                                    <Image
+                                                        src={draft.imagens[0]}
+                                                        alt=""
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-zinc-900">
+                                                        <FileEdit className="w-4 h-4" style={{ color: 'rgba(245,158,11,0.5)' }} />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <p style={{ color: '#fbbf24' }} className="font-medium line-clamp-1">
+                                                    {draft.titulo || "Sem título"}
+                                                </p>
+                                                <p className="text-zinc-500 text-xs">
+                                                    {draft.bairro || "—"}, {draft.cidade || "—"}
+                                                    {draft.imagens && draft.imagens.length > 0 && (
+                                                        <span style={{ color: 'rgba(245,158,11,0.7)' }} className="ml-2">
+                                                            • {draft.imagens.length} foto(s)
+                                                        </span>
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="px-6">
+                                        <div
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                padding: '4px 10px',
+                                                backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                                                border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                borderRadius: '6px',
+                                                color: '#f59e0b',
+                                                fontSize: '10px',
+                                                fontWeight: 800,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.1em',
+                                            }}
+                                        >
+                                            📋 Rascunho
+                                        </div>
+                                        {draft.savedAt && (
+                                            <p className="text-zinc-600 text-[10px] mt-1">
+                                                Salvo: {new Date(draft.savedAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="px-6">
+                                        {draft.preco ? (
+                                            <p style={{ color: 'rgba(251,191,36,0.7)' }} className="font-medium">
+                                                {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 }).format(draft.preco)}
+                                            </p>
+                                        ) : (
+                                            <p className="text-zinc-600 italic text-xs">Não definido</p>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="px-6 text-right">
+                                        <div className="flex items-center justify-end gap-2">
+                                            <Link href="/admin/imoveis/novo">
+                                                <Button
+                                                    size="sm"
+                                                    style={{
+                                                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                                                        color: '#f59e0b',
+                                                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                        fontSize: '10px',
+                                                        fontWeight: 700,
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '0.05em',
+                                                    }}
+                                                >
+                                                    <Edit className="w-3 h-3 mr-1.5" />
+                                                    Continuar
+                                                </Button>
+                                            </Link>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                onClick={discardDraft}
+                                                className="text-red-500/50 hover:text-red-500 hover:bg-red-500/10 h-8 w-8 p-0"
+                                                title="Descartar rascunho"
+                                            >
+                                                <Trash2 className="w-3.5 h-3.5" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )}
+
+                            {/* === IMÓVEIS DO BANCO === */}
                             {filteredImoveis.map((imovel) => (
                                 <TableRow key={imovel.id} className="border-zinc-900 hover:bg-zinc-800/10 transition-colors">
                                     <TableCell className="py-4 px-6">
@@ -193,7 +343,7 @@ export default function AdminImoveisPage() {
                                     </TableCell>
                                 </TableRow>
                             ))}
-                            {filteredImoveis.length === 0 && (
+                            {filteredImoveis.length === 0 && !draft && (
                                 <TableRow>
                                     <TableCell colSpan={4} className="h-32 text-center text-zinc-500 italic">
                                         Nenhum imóvel encontrado para sua busca.

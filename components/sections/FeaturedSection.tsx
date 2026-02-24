@@ -10,37 +10,74 @@ export default async function FeaturedSection() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'fallback_key'
     );
 
+    // Query simplificada - sem ordem_destaque para evitar erro se coluna não existe
     const { data: properties, error } = await supabase
         .from("imoveis")
         .select("*")
         .eq("status", "ativo")
         .eq("destaque", true)
-        .order("ordem_destaque", { ascending: true })
-        .limit(3);
+        .order("created_at", { ascending: false })
+        .limit(9);
 
     if (error) {
-        console.error("Erro Supabase FeaturedSection:", {
-            message: error.message,
-            details: error.details,
-            hint: error.hint,
-            code: error.code
-        });
-        return null;
+        console.error("❌ FeaturedSection erro:", JSON.stringify(error), error?.message, error?.code);
+
+        // Fallback: tentar buscar sem filtro de destaque
+        const { data: fallbackData, error: fallbackError } = await supabase
+            .from("imoveis")
+            .select("*")
+            .eq("status", "ativo")
+            .order("created_at", { ascending: false })
+            .limit(9);
+
+        if (fallbackError) {
+            console.error("❌ FeaturedSection fallback erro:", JSON.stringify(fallbackError));
+            return (
+                <section className="py-24 px-4 md:px-8 bg-zinc-950">
+                    <div className="max-w-7xl mx-auto text-center border border-zinc-900 rounded-3xl py-20 px-6">
+                        <h2 className="text-2xl font-serif text-white mb-4">Carregando imóveis...</h2>
+                        <p className="text-zinc-500 max-w-md mx-auto">
+                            Não foi possível carregar os imóveis neste momento. Tente recarregar a página.
+                        </p>
+                    </div>
+                </section>
+            );
+        }
+
+        if (fallbackData && fallbackData.length > 0) {
+            return renderSection(fallbackData as Imovel[]);
+        }
     }
 
     if (!properties || properties.length === 0) {
+        // Tentar sem filtro de destaque caso nenhum esteja marcado
+        const { data: allProperties } = await supabase
+            .from("imoveis")
+            .select("*")
+            .eq("status", "ativo")
+            .order("created_at", { ascending: false })
+            .limit(9);
+
+        if (allProperties && allProperties.length > 0) {
+            return renderSection(allProperties as Imovel[]);
+        }
+
         return (
             <section className="py-24 px-4 md:px-8 bg-zinc-950">
                 <div className="max-w-7xl mx-auto text-center border border-zinc-900 rounded-3xl py-20 px-6">
-                    <h2 className="text-2xl font-serif text-white mb-4">Nenhum imóvel em destaque</h2>
+                    <h2 className="text-2xl font-serif text-white mb-4">Nenhum imóvel cadastrado</h2>
                     <p className="text-zinc-500 max-w-md mx-auto">
-                        Para que um imóvel apareça aqui, ele deve estar marcado como <strong>Ativo</strong> e <strong>Destaque</strong> no painel administrativo.
+                        Cadastre imóveis no painel administrativo e marque como <strong>Destaque</strong> para que apareçam aqui.
                     </p>
                 </div>
             </section>
         );
     }
 
+    return renderSection(properties as Imovel[]);
+}
+
+function renderSection(properties: Imovel[]) {
     return (
         <section className="py-24 px-4 md:px-8 bg-zinc-950">
             <div className="max-w-7xl mx-auto">
@@ -64,7 +101,7 @@ export default async function FeaturedSection() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {properties.map((property) => (
-                        <PropertyCard key={property.id} property={property as Imovel} />
+                        <PropertyCard key={property.id} property={property} />
                     ))}
                 </div>
             </div>

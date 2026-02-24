@@ -69,18 +69,93 @@ export default function ImageUpload({ images, onChange }: ImageUploadProps) {
         onChange(newImages);
     };
 
+    const setAsCover = (index: number) => {
+        if (index === 0) return;
+        const newImages = [...images];
+        const [coverImage] = newImages.splice(index, 1);
+        newImages.unshift(coverImage);
+        onChange(newImages);
+        toast.success("Imagem definida como capa!");
+    };
+
     return (
         <div className="space-y-4">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {images.map((url, index) => (
                     <div key={url} className="relative aspect-video rounded-xl overflow-hidden border border-zinc-800 group">
                         <Image src={url} alt={`Preview ${index}`} fill className="object-cover" />
+
+                        {/* Badge de Capa - usando inline styles para garantir renderização */}
+                        {index === 0 && (
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    left: '8px',
+                                    padding: '4px 10px',
+                                    backgroundColor: '#f59e0b',
+                                    color: '#000',
+                                    fontSize: '10px',
+                                    fontWeight: 900,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    borderRadius: '6px',
+                                    zIndex: 50,
+                                    boxShadow: '0 2px 12px rgba(0,0,0,0.6)',
+                                    border: '2px solid rgba(255,255,255,0.3)',
+                                }}
+                            >
+                                ⭐ CAPA
+                            </div>
+                        )}
+
+                        {/* Botão remover - sempre visível no canto */}
                         <button
+                            type="button"
                             onClick={() => removeImage(index)}
-                            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                            style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                padding: '4px',
+                                backgroundColor: '#ef4444',
+                                color: '#fff',
+                                borderRadius: '50%',
+                                zIndex: 50,
+                                border: 'none',
+                                cursor: 'pointer',
+                            }}
+                            title="Remover imagem"
                         >
-                            <X className="w-3 h-3" />
+                            <X className="w-3.5 h-3.5" />
                         </button>
+
+                        {/* Botão "Usar como Capa" - sempre visível na parte inferior */}
+                        {index !== 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setAsCover(index)}
+                                style={{
+                                    position: 'absolute',
+                                    bottom: '0',
+                                    left: '0',
+                                    right: '0',
+                                    padding: '6px',
+                                    backgroundColor: 'rgba(0,0,0,0.7)',
+                                    color: '#f59e0b',
+                                    fontSize: '9px',
+                                    fontWeight: 800,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    zIndex: 50,
+                                    textAlign: 'center',
+                                }}
+                            >
+                                ⭐ Definir como Capa
+                            </button>
+                        )}
                     </div>
                 ))}
 

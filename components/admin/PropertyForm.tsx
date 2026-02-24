@@ -29,7 +29,7 @@ import {
     ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ImageUpload from "@/components/admin/ImageUpload";
 import { Imovel } from "@/types/database";
 
@@ -75,8 +75,14 @@ interface PropertyFormProps {
 export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     const [loading, setLoading] = useState(false);
     const [images, setImages] = useState<string[]>(initialData?.imagens || []);
+    const [draftRestored, setDraftRestored] = useState(false);
     const router = useRouter();
     const supabase = createClient();
+    const hasMounted = useRef(false);
+    const imagesRef = useRef(images);
+    imagesRef.current = images;
+
+    const DRAFT_KEY = "@valteir:property-draft";
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema) as any,
@@ -113,6 +119,108 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
 
     const tipoNegocio = form.watch("tipo_negocio");
 
+    // Função centralizada para salvar rascunho
+    const saveDraft = useRef(() => {
+        const currentValues = form.getValues();
+        const draft = {
+            ...currentValues,
+            imagens: imagesRef.current,
+            mode,
+            id: initialData?.id,
+            savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    });
+    saveDraft.current = () => {
+        const currentValues = form.getValues();
+        const draft = {
+            ...currentValues,
+            imagens: imagesRef.current,
+            mode,
+            id: initialData?.id,
+            savedAt: new Date().toISOString(),
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    };
+
+    // Auto-load rascunho (apenas no mount, apenas em modo criação)
+    useEffect(() => {
+        if (initialData) return;
+        const savedDraft = localStorage.getItem(DRAFT_KEY);
+        if (savedDraft) {
+            try {
+                const draft = JSON.parse(savedDraft);
+                if (draft.mode === 'create') {
+                    const formFields = ['titulo', 'descricao', 'preco', 'tipo', 'tipo_negocio',
+                        'valor_locacao', 'valor_condominio', 'valor_iptu', 'garantias',
+                        'bairro', 'cidade', 'estado', 'endereco', 'quartos', 'suites',
+                        'area_util', 'vagas_garagem', 'destaque', 'status'];
+
+                    let hasData = false;
+                    formFields.forEach((key) => {
+                        if (draft[key] !== undefined && draft[key] !== null && draft[key] !== '') {
+                            form.setValue(key as any, draft[key]);
+                            if (key === 'titulo' && draft[key]) hasData = true;
+                        }
+                    });
+
+                    if (draft.imagens && draft.imagens.length > 0) {
+                        setImages(draft.imagens);
+                        hasData = true;
+                    }
+
+                    if (hasData) {
+                        setDraftRestored(true);
+                        toast.info("📋 Rascunho automático restaurado!");
+                    }
+                }
+            } catch (e) {
+                console.error("Erro ao carregar rascunho:", e);
+            }
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // Auto-save: subscription nos campos do formulário
+    useEffect(() => {
+        const subscription = form.watch(() => {
+            if (hasMounted.current) {
+                saveDraft.current();
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [form]);
+
+    // Auto-save: quando imagens mudam (mas não no mount inicial)
+    useEffect(() => {
+        if (!hasMounted.current) {
+            hasMounted.current = true;
+            return;
+        }
+        saveDraft.current();
+    }, [images]);
+
+    // Salvar rascunho ao sair da página (beforeunload) e ao desmontar
+    useEffect(() => {
+        const handleBeforeUnload = () => {
+            saveDraft.current();
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            // Salvar ao desmontar (navegação interna do Next.js)
+            saveDraft.current();
+        };
+    }, []);
+
+    const discardDraft = () => {
+        localStorage.removeItem(DRAFT_KEY);
+        setDraftRestored(false);
+        form.reset();
+        setImages([]);
+        toast.success("Rascunho descartado!");
+    };
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         if (images.length === 0) {
             toast.error("Adicione ao menos uma imagem do imóvel.");
@@ -125,10 +233,9 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
 
             const payload = {
                 ...values,
-                slug: mode === 'create' ? slug : undefined, // Only set slug on create to avoid changes impacting SEO
+                slug: mode === 'create' ? slug : undefined,
                 imagens: images,
                 updated_at: new Date().toISOString(),
-                // Ensure zeros are nulls if preferred, or keep as zeros. Keeping as is for now.
             };
 
             let error;
@@ -149,6 +256,10 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
 
             if (error) throw error;
 
+            // Limpar rascunho após sucesso
+            localStorage.removeItem(DRAFT_KEY);
+            setDraftRestored(false);
+
             toast.success(mode === 'create' ? "Imóvel cadastrado!" : "Imóvel atualizado!");
             router.push("/admin/imoveis");
             router.refresh();
@@ -161,6 +272,44 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
 
     return (
         <form onSubmit={form.handleSubmit(onSubmit as any)} className="space-y-12">
+            {/* Banner de rascunho restaurado */}
+            {draftRestored && (
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '12px 20px',
+                        backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                        borderRadius: '12px',
+                        color: '#f59e0b',
+                        fontSize: '13px',
+                        fontWeight: 600,
+                    }}
+                >
+                    <span>📋 Este formulário foi restaurado de um rascunho salvo automaticamente.</span>
+                    <button
+                        type="button"
+                        onClick={discardDraft}
+                        style={{
+                            padding: '4px 12px',
+                            backgroundColor: 'rgba(239,68,68,0.2)',
+                            color: '#ef4444',
+                            border: '1px solid rgba(239,68,68,0.3)',
+                            borderRadius: '6px',
+                            fontSize: '11px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                        }}
+                    >
+                        Descartar Rascunho
+                    </button>
+                </div>
+            )}
+
             {/* Seção 1: Imagens */}
             <section className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800">
                 <h2 className="text-xl font-serif text-white mb-6">Galeria de Imagens</h2>
