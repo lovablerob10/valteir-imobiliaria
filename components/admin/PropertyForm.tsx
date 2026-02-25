@@ -229,8 +229,9 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
 
         setLoading(true);
         try {
-            const slug = values.titulo.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-
+            const baseSlug = values.titulo.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+            const uniqueSuffix = Math.random().toString(36).substring(2, 8);
+            const slug = `${baseSlug}-${uniqueSuffix}`;
             const payload = {
                 ...values,
                 slug: mode === 'create' ? slug : undefined,
@@ -338,7 +339,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                         </Select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         {(tipoNegocio === 'venda' || tipoNegocio === 'ambos') && (
                             <div className="space-y-2">
                                 <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Valor Venda</label>
@@ -359,7 +360,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                         )}
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Condomínio</label>
                             <Input type="number" {...form.register("valor_condominio")} className="bg-zinc-950 border-zinc-800" />
@@ -375,7 +376,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                             <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
                                 <ShieldCheck className="w-4 h-4" /> Garantias Aceitas
                             </label>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 {GARANTIAS_OPTIONS.map((g) => (
                                     <label key={g} className="flex items-center space-x-2 bg-zinc-950 p-2 rounded cursor-pointer hover:bg-zinc-900">
                                         <Checkbox
@@ -405,7 +406,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                         <Input {...form.register("titulo")} placeholder="Ex: Mansão Suspensa Itaim" className="bg-zinc-950 border-zinc-800" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Tipo</label>
                             <Select onValueChange={(val) => form.setValue("tipo", val as any)} defaultValue={form.getValues("tipo")}>
@@ -452,7 +453,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             <section className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800">
                 <h2 className="text-xl font-serif text-white mb-6">Características & Localização</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div className="space-y-2">
                             <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
                                 <Maximize className="w-3 h-3" /> Área Útil (m²)
@@ -480,7 +481,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                     </div>
 
                     <div className="space-y-4">
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Input {...form.register("bairro")} placeholder="Bairro" className="bg-zinc-950 border-zinc-800" />
                             <Input {...form.register("cidade")} placeholder="Cidade" className="bg-zinc-950 border-zinc-800" />
                         </div>
@@ -499,11 +500,11 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 </div>
             </section>
 
-            <div className="flex justify-end gap-4 pb-20">
-                <Button type="button" variant="outline" className="h-14 px-8 border-zinc-800 bg-transparent text-white" onClick={() => router.back()}>
+            <div className="flex flex-col sm:flex-row justify-end gap-4 pb-20">
+                <Button type="button" variant="outline" className="h-14 w-full sm:w-auto px-8 border-zinc-800 bg-transparent text-white" onClick={() => router.back()}>
                     Cancelar
                 </Button>
-                <Button type="submit" className="h-14 px-12 bg-accent text-primary font-bold tracking-widest uppercase hover:bg-white" disabled={loading}>
+                <Button type="submit" className="h-14 w-full sm:w-auto px-12 bg-accent text-primary font-bold tracking-widest uppercase hover:bg-white" disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
                     {mode === 'create' ? "Cadastrar Imóvel" : "Salvar Alterações"}
                 </Button>

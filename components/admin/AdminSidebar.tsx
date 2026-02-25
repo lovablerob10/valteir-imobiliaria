@@ -26,7 +26,7 @@ export default function AdminSidebar({ className }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
     const supabase = createClient();
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(false); // Mobile inicia fechado
     const [userRole, setUserRole] = useState<string | null>(null);
 
     useEffect(() => {
@@ -80,12 +80,20 @@ export default function AdminSidebar({ className }: SidebarProps) {
                 onClick={() => setIsOpen(!isOpen)}
                 className="lg:hidden fixed bottom-6 right-6 z-50 p-4 bg-accent text-primary rounded-full shadow-lg"
             >
-                {isOpen ? <X /> : <Menu />}
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
 
-            <aside className={`fixed top-0 left-0 h-full bg-zinc-950 border-r border-zinc-900 transition-all duration-300 z-40 ${isOpen ? "w-64" : "w-20 lg:w-20"
+            {/* Backdrop Mobile */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/80 z-30 lg:hidden backdrop-blur-sm"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            <aside className={`fixed top-0 left-0 h-full bg-zinc-950 border-r border-zinc-900 transition-all duration-300 z-40 ${isOpen ? "translate-x-0 w-64" : "-translate-x-full lg:translate-x-0 lg:w-20"
                 } ${className}`}>
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full overflow-y-auto">
                     {/* Logo Section */}
                     <div className="h-24 flex items-center px-6 border-b border-zinc-900">
                         <Link href="/" className="flex items-center gap-2 overflow-hidden">

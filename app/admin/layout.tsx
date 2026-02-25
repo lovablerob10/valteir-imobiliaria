@@ -39,7 +39,7 @@ export default async function AdminLayout({
                         </div>
                     </div>
                 </header>
-                <main className="p-8">
+                <main className="p-4 lg:p-8">
                     {children}
                 </main>
             </div>
