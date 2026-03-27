@@ -26,7 +26,9 @@ import {
     Bath,
     Car,
     DollarSign,
-    ShieldCheck
+    ShieldCheck,
+    MapPin,
+    Search
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -46,6 +48,7 @@ const formSchema = z.object({
     valor_iptu: z.coerce.number().optional().nullable(),
     garantias: z.array(z.string()).default([]),
 
+    cep: z.string().optional().or(z.literal('')),
     bairro: z.string().min(2),
     cidade: z.string().min(2),
     estado: z.string().min(2),
@@ -74,6 +77,7 @@ interface PropertyFormProps {
 
 export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     const [loading, setLoading] = useState(false);
+    const [cepLoading, setCepLoading] = useState(false);
     const [images, setImages] = useState<string[]>(initialData?.imagens || []);
     const [draftRestored, setDraftRestored] = useState(false);
     const router = useRouter();
@@ -96,6 +100,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             valor_condominio: Number(initialData.valor_condominio || 0),
             valor_iptu: Number(initialData.valor_iptu || 0),
             garantias: initialData.garantias || [],
+            cep: initialData.cep || '',
             bairro: initialData.bairro,
             cidade: initialData.cidade,
             estado: initialData.estado,
@@ -108,6 +113,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
             status: (initialData.status as any) || 'ativo',
         } : {
             tipo: 'mansao',
+            cep: '',
             estado: 'SP',
             cidade: 'São Paulo',
             destaque: false,
@@ -118,6 +124,43 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
     });
 
     const tipoNegocio = form.watch("tipo_negocio");
+
+    // === Busca de endereço via CEP (ViaCEP) ===
+    const formatCep = (value: string) => {
+        const digits = value.replace(/\D/g, '').slice(0, 8);
+        if (digits.length > 5) return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+        return digits;
+    };
+
+    const handleCepChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const formatted = formatCep(e.target.value);
+        form.setValue('cep', formatted);
+        const digits = formatted.replace(/\D/g, '');
+        if (digits.length === 8) {
+            fetchAddressByCep(digits);
+        }
+    };
+
+    const fetchAddressByCep = async (cep: string) => {
+        setCepLoading(true);
+        try {
+            const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await res.json();
+            if (data.erro) {
+                toast.error('CEP não encontrado. Verifique e tente novamente.');
+                return;
+            }
+            form.setValue('endereco', data.logradouro || '');
+            form.setValue('bairro', data.bairro || '');
+            form.setValue('cidade', data.localidade || '');
+            form.setValue('estado', data.uf || '');
+            toast.success('Endereço preenchido automaticamente!');
+        } catch {
+            toast.error('Erro ao buscar CEP. Tente novamente.');
+        } finally {
+            setCepLoading(false);
+        }
+    };
 
     // Função centralizada para salvar rascunho
     const saveDraft = useRef(() => {
@@ -153,7 +196,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 if (draft.mode === 'create') {
                     const formFields = ['titulo', 'descricao', 'preco', 'tipo', 'tipo_negocio',
                         'valor_locacao', 'valor_condominio', 'valor_iptu', 'garantias',
-                        'bairro', 'cidade', 'estado', 'endereco', 'quartos', 'suites',
+                        'cep', 'bairro', 'cidade', 'estado', 'endereco', 'quartos', 'suites',
                         'area_util', 'vagas_garagem', 'destaque', 'status'];
 
                     let hasData = false;
@@ -449,52 +492,103 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                 </div>
             </section>
 
-            {/* Seção 3: Detalhes Técnicos */}
+            {/* Seção 3: Características do Imóvel */}
             <section className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800">
-                <h2 className="text-xl font-serif text-white mb-6">Características & Localização</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
-                                <Maximize className="w-3 h-3" /> Área Útil (m²)
-                            </label>
-                            <Input type="number" {...form.register("area_util")} className="bg-zinc-950 border-zinc-800" />
+                <h2 className="text-xl font-serif text-white mb-6 flex items-center gap-2">
+                    <Maximize className="w-5 h-5 text-accent" />
+                    Características
+                </h2>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                    <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
+                            <Maximize className="w-3 h-3" /> Área Útil (m²)
+                        </label>
+                        <Input type="number" {...form.register("area_util")} className="bg-zinc-950 border-zinc-800" />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
+                            <Bed className="w-3 h-3" /> Quartos
+                        </label>
+                        <Input type="number" {...form.register("quartos")} className="bg-zinc-950 border-zinc-800" />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
+                            <Bath className="w-3 h-3" /> Suítes
+                        </label>
+                        <Input type="number" {...form.register("suites")} className="bg-zinc-950 border-zinc-800" />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
+                            <Car className="w-3 h-3" /> Vagas
+                        </label>
+                        <Input type="number" {...form.register("vagas_garagem")} className="bg-zinc-950 border-zinc-800" />
+                    </div>
+                </div>
+                <div className="pt-6">
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                        <Checkbox
+                            checked={form.watch("destaque")}
+                            onCheckedChange={(checked) => form.setValue("destaque", checked as boolean)}
+                            className="border-zinc-700 data-[state=checked]:bg-accent data-[state=checked]:text-black"
+                        />
+                        <span className="text-sm text-zinc-300 group-hover:text-white transition-colors uppercase tracking-widest text-[10px] font-bold">Imóvel em Destaque na Home</span>
+                    </label>
+                </div>
+            </section>
+
+            {/* Seção 4: Localização */}
+            <section className="bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800">
+                <h2 className="text-xl font-serif text-white mb-6 flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-accent" />
+                    Localização
+                </h2>
+                <div className="space-y-6">
+                    {/* CEP com auto-busca */}
+                    <div className="flex items-end gap-3">
+                        <div className="space-y-2 w-48">
+                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">CEP</label>
+                            <Input
+                                value={form.watch('cep') || ''}
+                                onChange={handleCepChange}
+                                placeholder="00000-000"
+                                maxLength={9}
+                                className="bg-zinc-950 border-zinc-800"
+                            />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
-                                <Bed className="w-3 h-3" /> Quartos
-                            </label>
-                            <Input type="number" {...form.register("quartos")} className="bg-zinc-950 border-zinc-800" />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
-                                <Bath className="w-3 h-3" /> Suítes
-                            </label>
-                            <Input type="number" {...form.register("suites")} className="bg-zinc-950 border-zinc-800" />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black flex items-center gap-2">
-                                <Car className="w-3 h-3" /> Vagas
-                            </label>
-                            <Input type="number" {...form.register("vagas_garagem")} className="bg-zinc-950 border-zinc-800" />
-                        </div>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="h-10 px-4 border-zinc-800 bg-zinc-950 text-zinc-300 hover:text-white hover:bg-zinc-800"
+                            disabled={cepLoading || (form.watch('cep')?.replace(/\D/g, '')?.length || 0) !== 8}
+                            onClick={() => {
+                                const digits = (form.getValues('cep') || '').replace(/\D/g, '');
+                                if (digits.length === 8) fetchAddressByCep(digits);
+                            }}
+                        >
+                            {cepLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                            <span className="ml-2">{cepLoading ? 'Buscando...' : 'Buscar'}</span>
+                        </Button>
                     </div>
 
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Endereço */}
+                    <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Endereço (Logradouro)</label>
+                        <Input {...form.register("endereco")} placeholder="Rua, Avenida..." className="bg-zinc-950 border-zinc-800" />
+                    </div>
+
+                    {/* Bairro, Cidade, Estado */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Bairro</label>
                             <Input {...form.register("bairro")} placeholder="Bairro" className="bg-zinc-950 border-zinc-800" />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Cidade</label>
                             <Input {...form.register("cidade")} placeholder="Cidade" className="bg-zinc-950 border-zinc-800" />
                         </div>
-                        <Input {...form.register("endereco")} placeholder="Endereço completo" className="bg-zinc-950 border-zinc-800" />
-                        <div className="pt-4">
-                            <label className="flex items-center gap-3 cursor-pointer group">
-                                <Checkbox
-                                    checked={form.watch("destaque")}
-                                    onCheckedChange={(checked) => form.setValue("destaque", checked as boolean)}
-                                    className="border-zinc-700 data-[state=checked]:bg-accent data-[state=checked]:text-black"
-                                />
-                                <span className="text-sm text-zinc-300 group-hover:text-white transition-colors uppercase tracking-widest text-[10px] font-bold">Imóvel em Destaque na Home</span>
-                            </label>
+                        <div className="space-y-2">
+                            <label className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">Estado</label>
+                            <Input {...form.register("estado")} placeholder="UF" className="bg-zinc-950 border-zinc-800" />
                         </div>
                     </div>
                 </div>
