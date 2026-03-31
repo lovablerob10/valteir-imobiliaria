@@ -113,7 +113,7 @@ export default function ContactForm({ imovelId, imovelTitulo }: ContactFormProps
                     <Button
                         type="submit"
                         disabled={loading}
-                        className="w-full h-16 bg-gradient-to-r from-accent to-amber-600 text-primary font-bold tracking-[0.3em] uppercase hover:scale-[1.02] active:scale-[0.98] transition-all rounded-2xl shadow-lg shadow-accent/10"
+                        className="w-full h-16 bg-gradient-to-r from-accent to-[#c09a55] text-primary font-bold tracking-[0.3em] uppercase hover:scale-[1.02] active:scale-[0.98] transition-all rounded-2xl shadow-lg shadow-accent/10"
                     >
                         {loading ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <Send className="w-5 h-5 mr-3" />}
                         Enviar Solicitação

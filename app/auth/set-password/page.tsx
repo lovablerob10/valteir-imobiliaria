@@ -55,8 +55,8 @@ export default function SetPasswordPage() {
             <main className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
                 <div className="w-full max-w-md text-center space-y-6">
                     <div className="flex justify-center">
-                        <div className="w-20 h-20 rounded-full bg-amber-500/20 flex items-center justify-center">
-                            <CheckCircle2 className="w-10 h-10 text-amber-500" />
+                        <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center">
+                            <CheckCircle2 className="w-10 h-10 text-accent" />
                         </div>
                     </div>
                     <h1 className="text-2xl font-bold text-white">Senha Definida!</h1>
@@ -72,15 +72,15 @@ export default function SetPasswordPage() {
                 {/* Header */}
                 <div className="text-center mb-8 space-y-3">
                     <div className="flex justify-center mb-4">
-                        <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center">
-                            <Lock className="w-8 h-8 text-amber-500" />
+                        <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+                            <Lock className="w-8 h-8 text-accent" />
                         </div>
                     </div>
                     <h1 className="text-3xl font-bold text-white tracking-tight">
                         Defina sua Senha
                     </h1>
                     <p className="text-zinc-400 text-sm">
-                        Bem-vindo ao <span className="text-amber-500 font-semibold">Valteir Imóveis</span>.
+                        Bem-vindo ao <span className="text-accent font-semibold">Valteir Imóveis</span>.
                         Crie uma senha segura para acessar o painel administrativo.
                     </p>
                 </div>
@@ -97,7 +97,7 @@ export default function SetPasswordPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 placeholder="Mínimo 6 caracteres"
-                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                                className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
                                 required
                                 minLength={6}
                             />
@@ -120,7 +120,7 @@ export default function SetPasswordPage() {
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             placeholder="Repita a senha"
-                            className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 transition-all"
+                            className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/50 transition-all"
                             required
                             minLength={6}
                         />
@@ -131,7 +131,7 @@ export default function SetPasswordPage() {
                         <div className="space-y-1">
                             <div className="flex gap-1">
                                 <div className={`h-1 flex-1 rounded-full transition-all ${password.length >= 2 ? 'bg-red-500' : 'bg-zinc-800'}`} />
-                                <div className={`h-1 flex-1 rounded-full transition-all ${password.length >= 4 ? 'bg-amber-500' : 'bg-zinc-800'}`} />
+                                <div className={`h-1 flex-1 rounded-full transition-all ${password.length >= 4 ? 'bg-accent' : 'bg-zinc-800'}`} />
                                 <div className={`h-1 flex-1 rounded-full transition-all ${password.length >= 6 ? 'bg-emerald-500' : 'bg-zinc-800'}`} />
                                 <div className={`h-1 flex-1 rounded-full transition-all ${password.length >= 8 && /[!@#$%^&*]/.test(password) ? 'bg-emerald-400' : 'bg-zinc-800'}`} />
                             </div>
@@ -151,7 +151,7 @@ export default function SetPasswordPage() {
                     <button
                         type="submit"
                         disabled={loading || password.length < 6 || password !== confirmPassword}
-                        className="w-full py-3 bg-amber-500 hover:bg-amber-400 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold rounded-lg transition-all duration-300 disabled:cursor-not-allowed"
+                        className="w-full py-3 bg-accent hover:bg-accent/90 disabled:bg-zinc-700 disabled:text-zinc-500 text-black font-semibold rounded-lg transition-all duration-300 disabled:cursor-not-allowed"
                     >
                         {loading ? "Salvando..." : "Definir Senha e Acessar"}
                     </button>
