@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: any }) {
     if (!post) return {};
 
     return {
-        title: `${post.meta_title || post.titulo} | Valteir Imobiliária`,
+        title: `${post.meta_title || post.titulo} | Valteir Imóveis`,
         description: post.meta_description || post.resumo,
         openGraph: {
             title: post.titulo,
@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: { params: any }) {
                         </div>
                         <div>
                             <p className="text-white font-bold uppercase text-[10px] tracking-widest">Sobre o Autor</p>
-                            <h4 className="text-lg font-serif text-white">Valteir Imobiliária</h4>
+                            <h4 className="text-lg font-serif text-white">Valteir Imóveis</h4>
                         </div>
                     </div>
 

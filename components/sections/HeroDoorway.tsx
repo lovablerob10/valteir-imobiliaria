@@ -83,7 +83,7 @@ export default function HeroDoorway() {
             >
                 <div className="flex flex-col items-center gap-2 mb-8">
                     <span className="text-[10px] md:text-xs font-medium tracking-[0.8em] text-accent uppercase opacity-70 mb-2">
-                        Valteir Imobiliária
+                        Valteir Imóveis
                     </span>
                     <div className="h-[1px] w-20 bg-accent/30" />
                 </div>

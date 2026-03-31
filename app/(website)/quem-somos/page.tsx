@@ -149,7 +149,7 @@ export default function QuemSomosPage() {
                 <div className="max-w-7xl mx-auto w-full relative z-10 hero-content text-center">
                     <div className="inline-block overflow-hidden mb-6">
                         <span className="text-accent text-sm font-medium tracking-[0.6em] uppercase block hover:tracking-[0.8em] transition-all duration-700">
-                            Valteir Imobiliária
+                            Valteir Imóveis
                         </span>
                     </div>
                     <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif leading-none mb-10">
@@ -193,7 +193,7 @@ export default function QuemSomosPage() {
                             <span className="text-accent/50 text-xs font-bold tracking-[0.3em] uppercase mb-4 block">O Início de um Legado</span>
                             <h2 className="text-5xl font-serif mb-8 text-white leading-tight">Da Engenharia à <br /><span className="text-accent italic">Consultoria de Elite.</span></h2>
                             <p className="text-zinc-400 text-xl leading-relaxed font-light">
-                                Fundada em 2023, a **Valteir Imobiliária** é o reflexo da visão de seu fundador sobre o mercado de São José do Rio Preto. Valteir traz consigo um diferencial raro: a capacidade de ler a estrutura física e financeira de um imóvel com precisão técnica.
+                                Fundada em 2023, a **Valteir Imóveis** é o reflexo da visão de seu fundador sobre o mercado de São José do Rio Preto. Valteir traz consigo um diferencial raro: a capacidade de ler a estrutura física e financeira de um imóvel com precisão técnica.
                             </p>
                             <p className="text-zinc-500 text-lg leading-relaxed mt-6">
                                 Com raízes no canteiro de obras e na gestão de ativos, ele transformou o ato de comprar um imóvel em uma jornada de segurança e transparência absoluta.

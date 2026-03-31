@@ -130,7 +130,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
             <div className="mb-10 text-center relative z-10">
                 <h2 className="text-3xl font-serif mb-2 relative group inline-block">
                     <span className="relative inline-block text-3xl font-serif text-white tracking-wide">
-                        Valteir <span className="italic text-accent">Imobiliária</span>
+                        Valteir <span className="italic text-accent">Imóveis</span>
                     </span>
                     <div className="h-[1px] w-1/2 bg-gradient-to-r from-transparent via-accent/50 to-transparent mx-auto mt-4" />
                 </h2>

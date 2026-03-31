@@ -80,7 +80,7 @@ export default function SetPasswordPage() {
                         Defina sua Senha
                     </h1>
                     <p className="text-zinc-400 text-sm">
-                        Bem-vindo ao <span className="text-amber-500 font-semibold">Valteir Imobiliária</span>.
+                        Bem-vindo ao <span className="text-amber-500 font-semibold">Valteir Imóveis</span>.
                         Crie uma senha segura para acessar o painel administrativo.
                     </p>
                 </div>
@@ -158,7 +158,7 @@ export default function SetPasswordPage() {
                 </form>
 
                 <p className="text-center text-zinc-600 text-xs mt-8">
-                    © {new Date().getFullYear()} Valteir Imobiliária
+                    © {new Date().getFullYear()} Valteir Imóveis
                 </p>
             </div>
         </main>

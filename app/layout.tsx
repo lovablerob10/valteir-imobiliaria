@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const { data: config } = await supabase.from('configuracoes').select('meta_title, meta_description').eq('id', 1).single();
 
   return {
-    title: config?.meta_title || "Valteir Imobiliária | Imóveis de Alto Padrão",
-    description: config?.meta_description || "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imobiliária.",
+    title: config?.meta_title || "Valteir Imóveis | Imóveis de Alto Padrão",
+    description: config?.meta_description || "Descubra o luxo e a exclusividade em São Paulo com a Valteir Imóveis.",
     icons: {
       icon: [
         { url: '/favicon.svg?v=2', type: 'image/svg+xml' },

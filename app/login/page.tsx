@@ -24,7 +24,7 @@ export default function LoginPage() {
 
             if (error) throw error;
 
-            toast.success("Bem-vindo de volta ao Valteir Imobiliária.");
+            toast.success("Bem-vindo de volta ao Valteir Imóveis.");
             router.push("/admin");
             router.refresh();
         } catch (error: any) {
@@ -43,7 +43,7 @@ export default function LoginPage() {
             </div>
 
             <footer className="absolute bottom-6 left-0 right-0 text-center text-zinc-600 text-[10px] uppercase tracking-widest z-20">
-                © {new Date().getFullYear()} Valteir Imobiliária. All rights reserved.
+                © {new Date().getFullYear()} Valteir Imóveis. All rights reserved.
             </footer>
         </main>
     );
