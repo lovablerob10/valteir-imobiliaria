@@ -61,14 +61,23 @@ export default async function Footer() {
                                     {config?.endereco || "Endereço não informado"}
                                 </span>
                             </li>
-                            {config?.whatsapp && (
+                            {config?.whatsapp && (() => {
+                                const whatsappClean = config.whatsapp.replace(/\D/g, "");
+                                const whatsappFormatted = whatsappClean.length === 11 
+                                    ? `(${whatsappClean.substring(0, 2)}) ${whatsappClean.substring(2, 7)}-${whatsappClean.substring(7, 11)}`
+                                    : whatsappClean.length === 10
+                                        ? `(${whatsappClean.substring(0, 2)}) ${whatsappClean.substring(2, 6)}-${whatsappClean.substring(6, 10)}`
+                                        : config.whatsapp;
+                                
+                                return (
                                 <li className="flex items-center gap-3">
                                     <Phone className="w-5 h-5 text-accent shrink-0" />
-                                    <a href={`https://wa.me/55${config.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-muted-luxury text-sm hover:text-accent transition-colors">
-                                        {config.whatsapp}
+                                    <a href={`https://wa.me/55${whatsappClean}`} target="_blank" rel="noopener noreferrer" className="text-muted-luxury text-sm hover:text-accent transition-colors">
+                                        {whatsappFormatted}
                                     </a>
                                 </li>
-                            )}
+                                )
+                            })()}
                             {config?.email && (
                                 <li className="flex items-center gap-3">
                                     <Mail className="w-5 h-5 text-accent shrink-0" />
