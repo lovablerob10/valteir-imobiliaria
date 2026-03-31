@@ -2,9 +2,28 @@
 
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Award, ShieldCheck, Target } from "lucide-react";
+import { MessageSquare, Award, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AboutValteir() {
+    const [whatsapp, setWhatsapp] = useState("5517991726078");
+
+    useEffect(() => {
+        async function fetchConfig() {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from("configuracoes")
+                .select("whatsapp")
+                .eq("id", 1)
+                .single();
+            if (data?.whatsapp) {
+                setWhatsapp("55" + data.whatsapp.replace(/\D/g, ""));
+            }
+        }
+        fetchConfig();
+    }, []);
+
     return (
         <section className="py-24 px-4 md:px-8 bg-zinc-950 overflow-hidden">
             <div className="max-w-7xl mx-auto">
@@ -69,7 +88,7 @@ export default function AboutValteir() {
                         <div className="pt-6">
                             <Button
                                 className="h-16 px-10 bg-accent hover:bg-white text-primary font-bold tracking-[0.2em] uppercase rounded-xl transition-all group lg:w-auto w-full"
-                                onClick={() => window.open('https://wa.me/5517991726078', '_blank')}
+                                onClick={() => window.open(`https://wa.me/${whatsapp}`, '_blank')}
                             >
                                 <MessageSquare className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
                                 Fale com Valteir | CRECI: 214072F- SP

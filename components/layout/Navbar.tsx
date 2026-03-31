@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [nomeImobiliaria, setNomeImobiliaria] = useState("VALTEIR IMÓVEIS");
     const pathname = usePathname();
 
     useEffect(() => {
@@ -16,6 +18,21 @@ export default function Navbar() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    useEffect(() => {
+        async function fetchConfig() {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from("configuracoes")
+                .select("nome_imobiliaria")
+                .eq("id", 1)
+                .single();
+            if (data?.nome_imobiliaria) {
+                setNomeImobiliaria(data.nome_imobiliaria.toUpperCase());
+            }
+        }
+        fetchConfig();
     }, []);
 
     const navLinks = [
@@ -32,7 +49,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="group">
                     <span className="text-2xl md:text-3xl font-serif text-white tracking-tighter flex items-center">
-                        VALTEIR IMÓVEIS
+                        {nomeImobiliaria}
                     </span>
                 </Link>
 
