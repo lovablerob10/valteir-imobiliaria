@@ -67,8 +67,8 @@ export default function HeroDoorway() {
             {/* 1. Main Background Image (Behind) - z-10 */}
             <div ref={bgRef} className="absolute inset-0 z-10">
                 <Image
-                    src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&q=80&w=2000"
-                    alt="Mansão de Luxo"
+                    src="/hero-bg.jpg"
+                    alt="Valteir Imóveis - Hero Imagem"
                     fill
                     className="object-cover"
                     priority
