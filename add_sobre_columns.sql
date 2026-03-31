@@ -1,0 +1,7 @@
+-- Migration: Adicionar campos de conteúdo "Quem Somos" na tabela configuracoes
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_titulo TEXT DEFAULT 'Da Engenharia à Consultoria de Elite.';
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_texto_1 TEXT DEFAULT 'Fundada em 2023, a **Valteir Imóveis** é o reflexo da visão de seu fundador sobre o mercado de São José do Rio Preto. Valteir traz consigo um diferencial raro: a capacidade de ler a estrutura física e financeira de um imóvel com precisão técnica.';
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_texto_2 TEXT DEFAULT 'Com raízes no canteiro de obras e na gestão de ativos, ele transformou o ato de comprar um imóvel em uma jornada de segurança e transparência absoluta.';
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_citacao TEXT DEFAULT 'Minha missão nunca foi apenas fechar negócios, mas garantir que cada patrimônio adquirido sob minha consultoria seja um ativo de valor perpétuo para as próximas gerações.';
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_missao TEXT DEFAULT 'Facilitamos a aquisição do patrimônio dos seus sonhos com a clareza que só quem conhece o mercado de alto padrão pode oferecer. Nossa história é escrita com cada aperto de mão e cada sonho realizado com sucesso.';
+ALTER TABLE public.configuracoes ADD COLUMN IF NOT EXISTS sobre_frase_destaque TEXT DEFAULT 'O luxo é o resultado de mil pequenos detalhes executados com perfeição.';
