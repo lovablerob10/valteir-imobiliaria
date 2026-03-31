@@ -171,8 +171,8 @@ export default function AdminImoveisPage() {
                             {draft && (
                                 <TableRow
                                     style={{
-                                        borderBottom: '1px solid rgba(245, 158, 11, 0.2)',
-                                        backgroundColor: 'rgba(245, 158, 11, 0.05)',
+                                        borderBottom: '1px solid rgba(210, 174, 109, 0.2)',
+                                        backgroundColor: 'rgba(210, 174, 109, 0.05)',
                                     }}
                                 >
                                     <TableCell className="py-4 px-6">
@@ -213,8 +213,8 @@ export default function AdminImoveisPage() {
                                                 alignItems: 'center',
                                                 gap: '6px',
                                                 padding: '4px 10px',
-                                                backgroundColor: 'rgba(245, 158, 11, 0.15)',
-                                                border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                backgroundColor: 'rgba(210, 174, 109, 0.15)',
+                                                border: '1px solid rgba(210, 174, 109, 0.3)',
                                                 borderRadius: '6px',
                                                 color: '#d2ae6d',
                                                 fontSize: '10px',
@@ -246,9 +246,9 @@ export default function AdminImoveisPage() {
                                                 <Button
                                                     size="sm"
                                                     style={{
-                                                        backgroundColor: 'rgba(245, 158, 11, 0.2)',
+                                                        backgroundColor: 'rgba(210, 174, 109, 0.2)',
                                                         color: '#d2ae6d',
-                                                        border: '1px solid rgba(245, 158, 11, 0.3)',
+                                                        border: '1px solid rgba(210, 174, 109, 0.3)',
                                                         fontSize: '10px',
                                                         fontWeight: 700,
                                                         textTransform: 'uppercase',

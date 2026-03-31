@@ -1,12 +1,34 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { Mail, Phone, MapPin, MessageSquare, Clock } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { gsap } from "gsap";
 import ContactForm from "@/components/sections/ContactForm";
+import { createClient } from "@/lib/supabase/client";
+
+interface SiteConfig {
+    endereco: string | null;
+    whatsapp: string | null;
+    email: string | null;
+    horario_funcionamento: string | null;
+}
 
 export default function ContactPage() {
     const mainRef = useRef(null);
+    const [config, setConfig] = useState<SiteConfig | null>(null);
+
+    useEffect(() => {
+        async function fetchConfig() {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from("configuracoes")
+                .select("endereco, whatsapp, email, horario_funcionamento")
+                .eq("id", 1)
+                .single();
+            setConfig(data);
+        }
+        fetchConfig();
+    }, []);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -28,28 +50,34 @@ export default function ContactPage() {
         }, mainRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [config]);
+
+    // Dados dinâmicos — puxa do banco, com fallback
+    const enderecoRaw = config?.endereco || "Endereço não informado";
+    const whatsapp = config?.whatsapp || "(17) 99999-9999";
+    const whatsappClean = whatsapp.replace(/\D/g, "");
+    const horario = config?.horario_funcionamento || "Seg-Sex: 9h às 18h | Sáb: 9h às 13h";
 
     const contactDetails = [
         {
             icon: <MapPin className="w-6 h-6 text-accent" />,
             title: "Endereço",
-            value: "Av. Dr. Alberto Andaló, 3942, Vila Redentora",
-            sub: "São José do Rio Preto - SP"
+            value: enderecoRaw,
+            sub: "",
         },
         {
             icon: <Phone className="w-6 h-6 text-accent" />,
             title: "WhatsApp / Telefone",
-            value: "(17) 99172-6078",
+            value: whatsapp,
             sub: "Atendimento imediato via WhatsApp",
-            href: "https://wa.me/5517991726078"
+            href: `https://wa.me/55${whatsappClean}`,
         },
         {
             icon: <Clock className="w-6 h-6 text-accent" />,
             title: "Horário de Atendimento",
-            value: "Segunda a Sábado",
-            sub: "Das 07h00 às 23h00"
-        }
+            value: horario,
+            sub: "",
+        },
     ];
 
     return (
@@ -82,7 +110,7 @@ export default function ContactPage() {
                                             ) : (
                                                 <p className="text-xl md:text-2xl font-serif text-white">{detail.value}</p>
                                             )}
-                                            <p className="text-zinc-400 text-sm mt-1">{detail.sub}</p>
+                                            {detail.sub && <p className="text-zinc-400 text-sm mt-1">{detail.sub}</p>}
                                         </div>
                                     </div>
                                 </div>

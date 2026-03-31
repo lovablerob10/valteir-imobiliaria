@@ -133,6 +133,7 @@ export default async function RelatoriosPage() {
                         <thead>
                             <tr className="text-[10px] uppercase text-zinc-600 border-b border-white/5">
                                 <th className="pb-4 font-bold tracking-widest">Prospecto</th>
+                                <th className="pb-4 font-bold tracking-widest">Telefone</th>
                                 <th className="pb-4 font-bold tracking-widest">Data</th>
                                 <th className="pb-4 font-bold tracking-widest text-right">Status</th>
                             </tr>
@@ -143,8 +144,11 @@ export default async function RelatoriosPage() {
                                     <td className="py-4">
                                         <div className="flex flex-col">
                                             <span className="text-sm text-white font-medium">{lead.nome}</span>
-                                            <span className="text-[10px] text-zinc-500">{lead.email || 'Telefone: ' + lead.telefone}</span>
+                                            <span className="text-[10px] text-zinc-500">{lead.email}</span>
                                         </div>
+                                    </td>
+                                    <td className="py-4 text-xs text-zinc-400">
+                                        {lead.telefone || '—'}
                                     </td>
                                     <td className="py-4 text-xs text-zinc-400">
                                         {new Date(lead.created_at).toLocaleDateString('pt-BR')}

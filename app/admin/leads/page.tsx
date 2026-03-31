@@ -185,7 +185,7 @@ export default function LeadsPage() {
             case 'novo':
                 return <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 gap-1"><Clock className="w-3 h-3" /> Novo</Badge>;
             case 'em_atendimento':
-                return <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 gap-1"><UserCheck className="w-3 h-3" /> Atendimento</Badge>;
+                return <Badge className="bg-accent/20 text-accent border-accent/30 gap-1"><UserCheck className="w-3 h-3" /> Atendimento</Badge>;
             case 'convertido':
                 return <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 gap-1"><CheckCircle className="w-3 h-3" /> Convertido</Badge>;
             case 'perdido':

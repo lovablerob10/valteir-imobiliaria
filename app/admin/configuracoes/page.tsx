@@ -417,8 +417,8 @@ export default function ConfigPage() {
                                 <h2 className="text-lg font-serif text-white flex items-center gap-2">
                                     <Shield className="w-5 h-5 text-accent" /> Acesso & Permissões
                                 </h2>
-                                <div className="p-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl">
-                                    <p className="text-amber-500 text-xs leading-relaxed">
+                                <div className="p-6 bg-accent/5 border border-accent/20 rounded-2xl">
+                                    <p className="text-accent text-xs leading-relaxed">
                                         Para alterar senhas ou gerenciar acessos de corretores, utilize o menu de <strong>Equipe</strong> na barra lateral. As configurações abaixo são exclusivas para a segurança global do site.
                                     </p>
                                 </div>
