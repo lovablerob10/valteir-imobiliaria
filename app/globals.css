@@ -5,7 +5,7 @@
   --font-sans: "Inter", sans-serif;
 
   --color-primary: #0f172a;
-  --color-accent: #f59e0b;
+  --color-accent: #d2ae6d;
   --color-surface: #f5f5f4;
   --color-text-luxury: #fafaf9;
   --color-muted-luxury: #78716c;
@@ -65,7 +65,7 @@
     --card-foreground: #fafaf9;
     --popover: #0f172a;
     --popover-foreground: #fafaf9;
-    --primary: #f59e0b;
+    --primary: #d2ae6d;
     --primary-foreground: #fafaf9;
     --secondary: #1e293b;
     --secondary-foreground: #fafaf9;

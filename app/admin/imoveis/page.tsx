@@ -216,7 +216,7 @@ export default function AdminImoveisPage() {
                                                 backgroundColor: 'rgba(245, 158, 11, 0.15)',
                                                 border: '1px solid rgba(245, 158, 11, 0.3)',
                                                 borderRadius: '6px',
-                                                color: '#f59e0b',
+                                                color: '#d2ae6d',
                                                 fontSize: '10px',
                                                 fontWeight: 800,
                                                 textTransform: 'uppercase',
@@ -247,7 +247,7 @@ export default function AdminImoveisPage() {
                                                     size="sm"
                                                     style={{
                                                         backgroundColor: 'rgba(245, 158, 11, 0.2)',
-                                                        color: '#f59e0b',
+                                                        color: '#d2ae6d',
                                                         border: '1px solid rgba(245, 158, 11, 0.3)',
                                                         fontSize: '10px',
                                                         fontWeight: 700,

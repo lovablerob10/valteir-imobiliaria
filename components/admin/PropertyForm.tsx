@@ -327,7 +327,7 @@ export default function PropertyForm({ initialData, mode }: PropertyFormProps) {
                         backgroundColor: 'rgba(245, 158, 11, 0.15)',
                         border: '1px solid rgba(245, 158, 11, 0.3)',
                         borderRadius: '12px',
-                        color: '#f59e0b',
+                        color: '#d2ae6d',
                         fontSize: '13px',
                         fontWeight: 600,
                     }}
