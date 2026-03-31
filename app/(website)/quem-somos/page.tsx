@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { gsap } from "gsap";
@@ -16,6 +16,7 @@ import {
     Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -37,8 +38,32 @@ const values = [
     }
 ];
 
+interface SobreConfig {
+    nome_imobiliaria: string | null;
+    sobre_titulo: string | null;
+    sobre_texto_1: string | null;
+    sobre_texto_2: string | null;
+    sobre_citacao: string | null;
+    sobre_missao: string | null;
+    sobre_frase_destaque: string | null;
+}
+
 export default function QuemSomosPage() {
     const mainRef = useRef<HTMLDivElement>(null);
+    const [config, setConfig] = useState<SobreConfig | null>(null);
+
+    useEffect(() => {
+        async function fetchConfig() {
+            const supabase = createClient();
+            const { data } = await supabase
+                .from("configuracoes")
+                .select("nome_imobiliaria, sobre_titulo, sobre_texto_1, sobre_texto_2, sobre_citacao, sobre_missao, sobre_frase_destaque")
+                .eq("id", 1)
+                .single();
+            setConfig(data);
+        }
+        fetchConfig();
+    }, []);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -129,7 +154,21 @@ export default function QuemSomosPage() {
         }, mainRef);
 
         return () => ctx.revert();
-    }, []);
+    }, [config]);
+
+    // Dados dinâmicos com fallbacks
+    const nomeImob = config?.nome_imobiliaria || "Valteir Imóveis";
+    const sobreTitulo = config?.sobre_titulo || "Da Engenharia à Consultoria de Elite.";
+    const sobreTexto1 = config?.sobre_texto_1 || `Fundada em 2023, a **${nomeImob}** é o reflexo da visão de seu fundador sobre o mercado de São José do Rio Preto. Valteir traz consigo um diferencial raro: a capacidade de ler a estrutura física e financeira de um imóvel com precisão técnica.`;
+    const sobreTexto2 = config?.sobre_texto_2 || "Com raízes no canteiro de obras e na gestão de ativos, ele transformou o ato de comprar um imóvel em uma jornada de segurança e transparência absoluta.";
+    const sobreCitacao = config?.sobre_citacao || "Minha missão nunca foi apenas fechar negócios, mas garantir que cada patrimônio adquirido sob minha consultoria seja um ativo de valor perpétuo para as próximas gerações.";
+    const sobreMissao = config?.sobre_missao || "Facilitamos a aquisição do patrimônio dos seus sonhos com a clareza que só quem conhece o mercado de alto padrão pode oferecer. Nossa história é escrita com cada aperto de mão e cada sonho realizado com sucesso.";
+    const sobreFrase = config?.sobre_frase_destaque || "O luxo é o resultado de mil pequenos detalhes executados com perfeição.";
+
+    // Parse título em duas partes para formatação (ex: "Da Engenharia à" + "Consultoria de Elite.")
+    const tituloPartes = sobreTitulo.split(/(?<=à\s)/);
+    const tituloParte1 = tituloPartes[0] || sobreTitulo;
+    const tituloParte2 = tituloPartes[1] || "";
 
     return (
         <main ref={mainRef} className="bg-zinc-950 text-white overflow-x-hidden">
@@ -149,7 +188,7 @@ export default function QuemSomosPage() {
                 <div className="max-w-7xl mx-auto w-full relative z-10 hero-content text-center">
                     <div className="inline-block overflow-hidden mb-6">
                         <span className="text-accent text-sm font-medium tracking-[0.6em] uppercase block hover:tracking-[0.8em] transition-all duration-700">
-                            Valteir Imóveis
+                            {nomeImob}
                         </span>
                     </div>
                     <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif leading-none mb-10">
@@ -179,7 +218,7 @@ export default function QuemSomosPage() {
                             className="object-cover object-top grayscale hover:grayscale-0 transition-all duration-1000 scale-100"
                             onError={(e) => {
                                 e.currentTarget.src = "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=1200";
-                                e.currentTarget.srcset = ""; // Disable srcset to force fallback
+                                e.currentTarget.srcset = "";
                             }}
                         />
                         <div className="absolute bottom-0 left-0 right-0 p-10 bg-gradient-to-t from-black via-black/80 to-transparent">
@@ -191,21 +230,20 @@ export default function QuemSomosPage() {
                     <div className="space-y-48 lg:pl-12 lg:mt-32">
                         <div className="story-reveal-1">
                             <span className="text-accent/50 text-xs font-bold tracking-[0.3em] uppercase mb-4 block">O Início de um Legado</span>
-                            <h2 className="text-5xl font-serif mb-8 text-white leading-tight">Da Engenharia à <br /><span className="text-accent italic">Consultoria de Elite.</span></h2>
+                            <h2 className="text-5xl font-serif mb-8 text-white leading-tight">
+                                {tituloParte1}<br /><span className="text-accent italic">{tituloParte2}</span>
+                            </h2>
                             <p className="text-zinc-400 text-xl leading-relaxed font-light">
-                                Fundada em 2023, a **Valteir Imóveis** é o reflexo da visão de seu fundador sobre o mercado de São José do Rio Preto. Valteir traz consigo um diferencial raro: a capacidade de ler a estrutura física e financeira de um imóvel com precisão técnica.
+                                {sobreTexto1}
                             </p>
                             <p className="text-zinc-500 text-lg leading-relaxed mt-6">
-                                Com raízes no canteiro de obras e na gestão de ativos, ele transformou o ato de comprar um imóvel em uma jornada de segurança e transparência absoluta.
+                                {sobreTexto2}
                             </p>
 
-                            {/* Novo bloco de texto solicitado pelo usuário */}
+                            {/* Bloco de citação */}
                             <div className="mt-12 space-y-6 border-l border-accent/20 pl-8">
                                 <p className="text-zinc-400 text-lg leading-relaxed italic">
-                                    "Minha missão nunca foi apenas fechar negócios, mas garantir que cada patrimônio adquirido sob minha consultoria seja um ativo de valor perpétuo para as próximas gerações."
-                                </p>
-                                <p className="text-zinc-500 text-md leading-relaxed leading-extra-relaxed font-light">
-                                    A curadoria de Valteir é rigorosa. Ele seleciona pessoalmente cada propriedade, avaliando não apenas a estética, mas a procedência jurídica, a solidez estrutural e o potencial real de valorização. É essa ética inegociável que transformou seu nome em sinônimo de confiança no setor de alto padrão.
+                                    &quot;{sobreCitacao}&quot;
                                 </p>
                                 <div className="flex gap-4 pt-4">
                                     <div className="flex items-center gap-2 text-accent/60">
@@ -226,7 +264,7 @@ export default function QuemSomosPage() {
                         <div className="story-reveal-2">
                             <h3 className="text-3xl font-serif mb-6 text-zinc-300">Missão: Tranquilidade Absoluta.</h3>
                             <p className="text-zinc-400 text-xl leading-relaxed font-light">
-                                Facilitamos a aquisição do patrimônio dos seus sonhos com a clareza que só quem conhece o mercado de alto padrão pode oferecer. Nossa história é escrita com cada aperto de mão e cada sonho realizado com sucesso.
+                                {sobreMissao}
                             </p>
                             <div className="mt-12 flex items-center gap-6">
                                 <div className="h-[1px] flex-1 bg-accent/20" />
@@ -276,12 +314,10 @@ export default function QuemSomosPage() {
                 </div>
                 <div className="relative z-20 flex items-center justify-center h-full px-4">
                     <div className="text-center p-12 md:p-20 bg-black/60 backdrop-blur-[40px] border border-white/10 rounded-sm max-w-4xl shadow-2xl relative overflow-hidden group">
-                        {/* Efeito de brilho interno para simular vidro fumê premium */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-50" />
-
                         <div className="relative z-10">
                             <h2 className="text-4xl md:text-6xl font-serif mb-8 italic text-accent leading-tight">
-                                "O luxo é o resultado de mil pequenos detalhes executados com perfeição."
+                                &quot;{sobreFrase}&quot;
                             </h2>
                             <div className="w-24 h-[1px] bg-accent/40 mx-auto mb-8" />
                             <p className="text-zinc-400 uppercase tracking-[0.4em] text-xs font-bold">Valteir de Oliveira</p>

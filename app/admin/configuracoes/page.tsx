@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Save, Globe, MessageSquare, Shield, Bell, Loader2, CheckCircle2, MapPin, Phone, Mail, Instagram, Facebook, Clock } from "lucide-react";
+import { Save, Globe, MessageSquare, Shield, Bell, Loader2, CheckCircle2, MapPin, Phone, Mail, Instagram, Facebook, Clock, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 interface ConfigData {
@@ -23,6 +23,12 @@ interface ConfigData {
     meta_description: string;
     notificacoes_whatsapp_ativa: boolean;
     horario_funcionamento: string;
+    sobre_titulo: string;
+    sobre_texto_1: string;
+    sobre_texto_2: string;
+    sobre_citacao: string;
+    sobre_missao: string;
+    sobre_frase_destaque: string;
     updated_at: string;
 }
 
@@ -39,6 +45,12 @@ const DEFAULT_CONFIG: ConfigData = {
     meta_description: "Descubra o luxo e a exclusividade com a Valteir Imóveis.",
     notificacoes_whatsapp_ativa: false,
     horario_funcionamento: "Seg-Sex: 9h às 18h | Sab: 9h às 13h",
+    sobre_titulo: "Da Engenharia à Consultoria de Elite.",
+    sobre_texto_1: "",
+    sobre_texto_2: "",
+    sobre_citacao: "",
+    sobre_missao: "",
+    sobre_frase_destaque: "O luxo é o resultado de mil pequenos detalhes executados com perfeição.",
     updated_at: new Date().toISOString(),
 };
 
@@ -94,6 +106,12 @@ export default function ConfigPage() {
             meta_description: config.meta_description,
             notificacoes_whatsapp_ativa: config.notificacoes_whatsapp_ativa,
             horario_funcionamento: config.horario_funcionamento,
+            sobre_titulo: config.sobre_titulo,
+            sobre_texto_1: config.sobre_texto_1,
+            sobre_texto_2: config.sobre_texto_2,
+            sobre_citacao: config.sobre_citacao,
+            sobre_missao: config.sobre_missao,
+            sobre_frase_destaque: config.sobre_frase_destaque,
             updated_at: new Date().toISOString(),
         };
 
@@ -209,6 +227,16 @@ export default function ConfigPage() {
                             }`}
                     >
                         <Bell className="w-4 h-4 mr-3" /> Notificações
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        onClick={() => setActiveTab("sobre")}
+                        className={`justify-start rounded-none h-12 px-6 transition-all ${activeTab === "sobre"
+                            ? "text-accent bg-accent/5 border-r-2 border-accent"
+                            : "text-zinc-500 hover:text-white hover:bg-zinc-900"
+                            }`}
+                    >
+                        <FileText className="w-4 h-4 mr-3" /> Quem Somos
                     </Button>
                     <Button
                         variant="ghost"
@@ -405,6 +433,80 @@ export default function ConfigPage() {
                                         <p className="text-zinc-500 text-xs">Enviar resumo de performance da semana por e-mail.</p>
                                     </div>
                                     <Switch checked={false} disabled />
+                                </div>
+                            </section>
+                        </div>
+                    )}
+
+                    {/* ===== ABA: QUEM SOMOS ===== */}
+                    {activeTab === "sobre" && (
+                        <div className="space-y-8 animate-in fade-in duration-300">
+                            <section className="space-y-6">
+                                <h2 className="text-lg font-serif text-white flex items-center gap-2">
+                                    <FileText className="w-5 h-5 text-accent" /> Conteúdo da Página &quot;Quem Somos&quot;
+                                </h2>
+                                <p className="text-zinc-500 text-xs">Edite os textos que aparecem na página &quot;Quem Somos&quot; do site. As alterações são refletidas automaticamente.</p>
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Título Principal</Label>
+                                    <Input
+                                        className="bg-zinc-950/50 border-zinc-900 text-white h-12 rounded-xl focus:ring-accent"
+                                        value={config.sobre_titulo}
+                                        onChange={e => updateField("sobre_titulo", e.target.value)}
+                                        placeholder="Ex: Da Engenharia à Consultoria de Elite."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Texto Principal (Parágrafo 1)</Label>
+                                    <textarea
+                                        className="w-full bg-zinc-950/50 border border-zinc-900 text-white rounded-xl p-4 min-h-[120px] focus:ring-accent focus:outline-none focus:ring-1 text-sm resize-y"
+                                        value={config.sobre_texto_1}
+                                        onChange={e => updateField("sobre_texto_1", e.target.value)}
+                                        placeholder="Conte a história da fundação da imobiliária..."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Texto Complementar (Parágrafo 2)</Label>
+                                    <textarea
+                                        className="w-full bg-zinc-950/50 border border-zinc-900 text-white rounded-xl p-4 min-h-[100px] focus:ring-accent focus:outline-none focus:ring-1 text-sm resize-y"
+                                        value={config.sobre_texto_2}
+                                        onChange={e => updateField("sobre_texto_2", e.target.value)}
+                                        placeholder="Continue a narrativa com mais detalhes..."
+                                    />
+                                </div>
+
+                                <Separator className="bg-zinc-900" />
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Citação / Frase do Fundador</Label>
+                                    <textarea
+                                        className="w-full bg-zinc-950/50 border border-zinc-900 text-white rounded-xl p-4 min-h-[80px] focus:ring-accent focus:outline-none focus:ring-1 text-sm italic resize-y"
+                                        value={config.sobre_citacao}
+                                        onChange={e => updateField("sobre_citacao", e.target.value)}
+                                        placeholder="Ex: Minha missão nunca foi apenas fechar negócios..."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Texto da Missão</Label>
+                                    <textarea
+                                        className="w-full bg-zinc-950/50 border border-zinc-900 text-white rounded-xl p-4 min-h-[100px] focus:ring-accent focus:outline-none focus:ring-1 text-sm resize-y"
+                                        value={config.sobre_missao}
+                                        onChange={e => updateField("sobre_missao", e.target.value)}
+                                        placeholder="Descreva a missão da imobiliária..."
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label className="text-zinc-400 text-[10px] uppercase tracking-widest font-bold">Frase de Destaque (Seção Visual)</Label>
+                                    <Input
+                                        className="bg-zinc-950/50 border-zinc-900 text-white h-12 rounded-xl focus:ring-accent"
+                                        value={config.sobre_frase_destaque}
+                                        onChange={e => updateField("sobre_frase_destaque", e.target.value)}
+                                        placeholder="Ex: O luxo é o resultado de mil pequenos detalhes..."
+                                    />
                                 </div>
                             </section>
                         </div>
