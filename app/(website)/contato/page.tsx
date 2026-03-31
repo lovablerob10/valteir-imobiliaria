@@ -123,7 +123,7 @@ export default function ContactPage() {
                                 <span className="text-zinc-800 animate-pulse uppercase tracking-widest text-xs">Carregando Mapa...</span>
                             </div>
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3728.3228694420042!2d-49.387532!3d-20.816654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94bdad7c7f42c2af%3A0xc3f1f7ca5e49bb42!2sAv.%20Alberto%20Andal%C3%B3%2C%203942%20-%20Vila%20Redentora%2C%20S%C3%A3o%20Jos%C3%A9%20do%20Rio%20Preto%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1707694452145!5m2!1spt-BR!2sbr"
+                                src="https://maps.google.com/maps?q=Avenida%20An%C3%ADsio%20Haddad,%208001,%20S%C3%A3o%20Jos%C3%A9%20do%20Rio%20Preto&t=&z=15&ie=UTF8&iwloc=&output=embed"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0 }}
