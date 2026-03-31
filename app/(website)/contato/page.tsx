@@ -54,9 +54,15 @@ export default function ContactPage() {
 
     // Dados dinâmicos — puxa do banco, com fallback
     const enderecoRaw = config?.endereco || "Endereço não informado";
-    const whatsapp = config?.whatsapp || "(17) 99999-9999";
-    const whatsappClean = whatsapp.replace(/\D/g, "");
+    const whatsappRaw = config?.whatsapp || "(17) 99999-9999";
+    const whatsappClean = whatsappRaw.replace(/\D/g, "");
     const horario = config?.horario_funcionamento || "Seg-Sex: 9h às 18h | Sáb: 9h às 13h";
+    
+    const whatsappFormatted = whatsappClean.length === 11 
+        ? `(${whatsappClean.substring(0, 2)}) ${whatsappClean.substring(2, 7)}-${whatsappClean.substring(7, 11)}`
+        : whatsappClean.length === 10
+            ? `(${whatsappClean.substring(0, 2)}) ${whatsappClean.substring(2, 6)}-${whatsappClean.substring(6, 10)}`
+            : whatsappRaw;
 
     const contactDetails = [
         {
@@ -68,7 +74,7 @@ export default function ContactPage() {
         {
             icon: <Phone className="w-6 h-6 text-accent" />,
             title: "WhatsApp / Telefone",
-            value: whatsapp,
+            value: whatsappFormatted,
             sub: "Atendimento imediato via WhatsApp",
             href: `https://wa.me/55${whatsappClean}`,
         },
